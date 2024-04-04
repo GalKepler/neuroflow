@@ -14,6 +14,7 @@ def load_json_file(file_path: Union[str, Path]):
     :param file_path: The path to the JSON file to be loaded.
     :return: A dictionary representing the contents of the JSON file.
     """
+    file_path = Path(file_path)
     try:
         with Path.open(file_path, encoding="utf-8") as file:
             data = json.load(file)
