@@ -11,8 +11,7 @@ Overview
       - |docs|
     * - tests
       - |github-actions| |codecov|
-    * - package
-      |wheel| |supported-versions| |supported-implementations|
+    .. * - package
     ..   - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/neuroflow/badge/?style=flat
     :target: https://readthedocs.org/projects/neuroflow/
@@ -26,21 +25,21 @@ Overview
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
 
-.. |version| image:: https://img.shields.io/pypi/v/neuroflow.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/neuroflow
+.. .. |version| image:: https://img.shields.io/pypi/v/neuroflow.svg
+..     :alt: PyPI Package latest release
+..     :target: https://pypi.org/project/neuroflow
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/neuroflow.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/neuroflow
+.. .. |wheel| image:: https://img.shields.io/pypi/wheel/neuroflow.svg
+..     :alt: PyPI Wheel
+..     :target: https://pypi.org/project/neuroflow
 
 .. .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
 ..     :alt: Supported versions
 ..     :target: https://pypi.org/project/neuroflow
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/neuroflow.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/neuroflow
+.. .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/neuroflow.svg
+..     :alt: Supported implementations
+..     :target: https://pypi.org/project/neuroflow
 
 .. .. |commits-since| image:: https://img.shields.io/github/commits-since/GalKepler/neuroflow/v0.0.0.svg
 ..     :alt: Commits since latest release
