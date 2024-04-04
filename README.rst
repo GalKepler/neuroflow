@@ -11,8 +11,6 @@ Overview
       - |docs|
     * - tests
       - |github-actions| |codecov|
-    .. * - package
-    ..   - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/neuroflow/badge/?style=flat
     :target: https://readthedocs.org/projects/neuroflow/
     :alt: Documentation Status
@@ -24,6 +22,10 @@ Overview
 .. |codecov| image:: https://codecov.io/github/GalKepler/neuroflow/graph/badge.svg?token=LO5CH471O4
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
+
+.. end-badges
+    .. * - package
+    ..   - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 
 .. .. |version| image:: https://img.shields.io/pypi/v/neuroflow.svg
 ..     :alt: PyPI Package latest release
@@ -45,9 +47,6 @@ Overview
 ..     :alt: Commits since latest release
 ..     :target: https://github.com/GalKepler/neuroflow/compare/v0.0.0...main
 
-
-
-.. end-badges
 
 NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced analysis and visualization for neuroimaging
 research.
