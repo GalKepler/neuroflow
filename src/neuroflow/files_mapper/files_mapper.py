@@ -1,9 +1,15 @@
+"""
+This module contains the FilesMapper class.
+"""
 from typing import Tuple, Union
 from pathlib import Path
 from neuroflow.files_mapper.utils import load_json_file
 
 
 class FilesMapper:
+    """
+    A class used to map files to their respective patterns.
+    """
     def __init__(self, path: str, patterns: Union[str,Path] = "src/neuroflow/files_mapper/patterns.json"):
         """
         Initialize the FilesMapper object.
