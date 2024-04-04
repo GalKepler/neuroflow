@@ -14,4 +14,4 @@ def test_files_mapper():
     mapper = FilesMapper("data/0001/1")
     # check that calling "files" raises an error
     with pytest.raises(FileNotFoundError):
-        files = mapper.files  # noqa
+        print(mapper.files)  # pylint: disable=no-member
