@@ -9,8 +9,10 @@ Example:
     0001
 """
 
-from typing import Tuple, Union
 from pathlib import Path
+from typing import Tuple
+from typing import Union
+
 from neuroflow.files_mapper.utils import load_json_file
 
 
@@ -18,7 +20,8 @@ class FilesMapper:
     """
     A class used to map files to their respective patterns.
     """
-    def __init__(self, path: str, patterns: Union[str,Path] = "src/neuroflow/files_mapper/patterns.json"):
+
+    def __init__(self, path: str, patterns: Union[str, Path] = "src/neuroflow/files_mapper/patterns.json"):
         """
         Initialize the FilesMapper object.
         This object is used to map files to their respective patterns.
@@ -35,7 +38,7 @@ class FilesMapper:
         self.patterns = load_json_file(patterns)
         self._subject, self._session = self._identify_entities()
 
-    def _identify_entities(self) -> Tuple[str,str]:
+    def _identify_entities(self) -> Tuple[str, str]:
         """
         Identify subject's and session's ID
 
@@ -48,7 +51,6 @@ class FilesMapper:
         session = self.path.name
         return subject, session
 
-    
     def _map_files(self) -> dict:
         """
         Maps the files in the directory to their respective patterns.
@@ -59,7 +61,7 @@ class FilesMapper:
             A dictionary containing the files as keys and their corresponding patterns as values.
         """
         result = {}
-        for key,pattern in self.patterns.items():
+        for key, pattern in self.patterns.items():
             file = self.path / pattern.format(subject=self.subject, session=self.session)
             if not file.exists():
                 raise FileNotFoundError(f"File {file} not found. ({key} missing.)")
@@ -77,7 +79,7 @@ class FilesMapper:
             A dictionary containing the files as keys and their corresponding patterns as values.
         """
         return self._map_files()
-    
+
     @property
     def subject(self) -> str:
         """
@@ -89,7 +91,7 @@ class FilesMapper:
             The subject's ID.
         """
         return self._subject
-    
+
     @property
     def session(self) -> str:
         """
@@ -101,7 +103,3 @@ class FilesMapper:
             The session's ID.
         """
         return self._session
-
-
-
-        

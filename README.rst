@@ -21,7 +21,7 @@ Overview
     :alt: GitHub Actions Build Status
     :target: https://github.com/GalKepler/neuroflow/actions
 
-.. |codecov| image:: https://codecov.io/gh/GalKepler/neuroflow/branch/main/graphs/badge.svg?branch=main
+.. |codecov| image:: https://codecov.io/github/GalKepler/neuroflow/graph/badge.svg?token=LO5CH471O4
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
 
