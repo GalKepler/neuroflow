@@ -1,6 +1,14 @@
 """
 This module contains the FilesMapper class.
+
+Example:
+    >>> from neuroflow.files_mapper.files_mapper import FilesMapper
+    >>> path = "data/0001/1"
+    >>> mapper = FilesMapper(path)
+    >>> print(mapper.subject)
+    0001
 """
+
 from typing import Tuple, Union
 from pathlib import Path
 from neuroflow.files_mapper.utils import load_json_file
