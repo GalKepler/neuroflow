@@ -3,6 +3,7 @@ Reconstruction of diffusion tensors from the diffusion signal.
 """
 
 from pathlib import Path
+from typing import ClassVar
 from typing import Union
 
 from nipype.interfaces.mrtrix3 import DWIExtract
@@ -14,6 +15,11 @@ class ReconTensors:
     """
     Reconstruction of diffusion tensors from the diffusion signal.
     """
+
+    OUTPUTS: ClassVar = []
+    OUTPUT_TEMPLATE: ClassVar = (
+        "{software}/sub-{subject}_ses-{session}_space-dwi_acq-shell{max_bvalue}_rec-{software}_desc-{metric}_dwiref.nii.gz"
+    )
 
     def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], max_bvalue: int = None, bval_tol: int = 50):  # noqa
         """
@@ -32,6 +38,7 @@ class ReconTensors:
         self.out_dir = Path(out_dir)
         self.filtered_bvalues = self._filter_bvalues(max_bvalue, bval_tol)
         self.out_dir.mkdir(parents=True, exist_ok=True)
+        self.software = None
 
     def _filter_bvalues(self, max_bvalue: int = None, bval_tol: int = 50) -> int:  # noqa
         """
@@ -72,6 +79,27 @@ class ReconTensors:
         dwiextract.inputs.shell = self.filtered_bvalues
         dwiextract.run()
         return out_files
+
+    def gather_outputs(self) -> dict:
+        """
+        Gather outputs for the DipyTensors workflow.
+
+        Returns
+        -------
+        dict
+            Outputs for the DipyTensors workflow.
+        """
+        return {
+            key: self.out_dir
+            / self.OUTPUT_TEMPLATE.format(
+                subject=self.mapper.subject,
+                session=self.mapper.session,
+                max_bvalue=self.max_bvalue,
+                software=self.software,
+                metric=key,
+            )
+            for key in self.OUTPUTS
+        }
 
     @property
     def filtered_files(self) -> dict:
