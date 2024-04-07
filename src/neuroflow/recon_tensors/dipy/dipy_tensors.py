@@ -65,14 +65,9 @@ class DipyTensors(ReconTensors):
         }
         return {key: str(value) for key, value in inputs.items()}
 
-    def run(self, return_outputs: bool = True) -> dict:
+    def run(self, force: bool = False) -> dict:
         """
         Run the DipyTensors workflow.
-
-        Parameters
-        ----------
-        return_outputs : bool
-            Whether to return the outputs or not.
 
         Returns
         -------
@@ -83,7 +78,9 @@ class DipyTensors(ReconTensors):
         outputs = self.gather_outputs()
         out_dir = Path(inputs["out_dir"])
         out_dir.mkdir(parents=True, exist_ok=True)
+        if force:
+            for file in outputs.values():
+                file.unlink(missing_ok=True)
         flow = ReconstDtiFlow()
         flow.run(**inputs, **{f"out_{key}": str(value) for key, value in outputs.items()})
-        if return_outputs:
-            return outputs
+        return outputs
