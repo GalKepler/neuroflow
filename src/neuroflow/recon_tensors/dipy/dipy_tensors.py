@@ -1,3 +1,8 @@
+"""
+Reconstruction of diffusion tensors from the diffusion signal using Dipy.
+"""
+
+import warnings
 from pathlib import Path
 from typing import Union
 
@@ -6,6 +11,8 @@ from dipy.workflows.reconst import ReconstDtiFlow
 from neuroflow.files_mapper.files_mapper import FilesMapper
 from neuroflow.recon_tensors.dipy.outputs import OUTPUTS
 from neuroflow.recon_tensors.recon_tensors import ReconTensors
+
+warnings.filterwarnings("ignore")
 
 
 class DipyTensors(ReconTensors):
@@ -21,7 +28,7 @@ class DipyTensors(ReconTensors):
         out_dir: Union[str, Path],
         max_bvalue: int = None,  # noqa
         bval_tol: int = 50,
-        fit_method: str = "WLS",
+        fit_method: str = "NLLS",
     ):
         """
         Initialize the DipyTensors class.
