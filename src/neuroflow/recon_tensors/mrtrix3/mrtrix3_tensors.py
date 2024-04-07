@@ -96,6 +96,8 @@ class MRTrix3Tensors(ReconTensors):
         if force:
             for file in outputs.values():
                 file.unlink(missing_ok=True)
+        if all([output.exists() for output in outputs.values()]):  # noqa
+            return outputs
         tensor_metrics = TensorMetrics(**{f"out_{key}": str(value) for key, value in outputs.items()})
         tensor_metrics.inputs.in_file = tensor
         tensor_metrics.run()
