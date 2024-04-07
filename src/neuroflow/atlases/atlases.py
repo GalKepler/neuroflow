@@ -19,7 +19,7 @@ class Atlases:
     Registrations of atlases to subject's diffusion space.
     """
 
-    AVAILABLE_ATLASES: ClassVar = AVAILABLE_ATLASES
+    ATLASES: ClassVar = AVAILABLE_ATLASES
     OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_{atlas}"
 
     def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Union[str, list] = None):  # noqa
@@ -43,13 +43,13 @@ class Atlases:
         Validate that the provided atlas is included in the available atlases.
         """
         if atlases is None:
-            return self.AVAILABLE_ATLASES
+            return self.ATLASES
         if isinstance(atlases, str):
             atlases = [atlases]
         for atlas in atlases:
-            if atlas not in self.AVAILABLE_ATLASES:
+            if atlas not in self.ATLASES:
                 raise ValueError(f"Atlas {atlas} is not available.")
-        return {atlas: self.AVAILABLE_ATLASES[atlas] for atlas in atlases}
+        return {atlas: self.ATLASES[atlas] for atlas in atlases}
 
     def register_atlas_to_t1w(self, force: bool = False):
         """
