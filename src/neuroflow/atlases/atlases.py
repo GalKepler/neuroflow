@@ -114,3 +114,10 @@ class Atlases:
         Register the atlases to the T1w space.
         """
         return self.register_atlas_to_t1w()
+
+    @property
+    def dwi_atlases(self):
+        """
+        Register the atlases to the diffusion space.
+        """
+        return self.register_atlas_to_dwi()
