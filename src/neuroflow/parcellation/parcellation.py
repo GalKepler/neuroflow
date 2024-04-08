@@ -8,8 +8,11 @@ from typing import ClassVar
 from typing import Optional
 from typing import Union
 
+import pandas as pd
+
 from neuroflow.atlases.atlases import Atlases
 from neuroflow.parcellation.available_measures import AVAILABLE_MEASURES
+from neuroflow.parcellation.utils import parcellate
 from neuroflow.recon_tensors.recon_tensors import ReconTensors
 
 
@@ -18,7 +21,9 @@ class Parcellation:
     Parcellation class for NeuroFlow.
     """
 
-    OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_atlas-{atlas}_meas-{measure}_parc.nii.gz"
+    OUTPUT_TEMPLATE: ClassVar = (
+        "{atlas}/sub-{subject}_ses-{session}_space-dwi_label-{label}_acq-shell{acq}_rec-{software}_atlas-{atlas}_desc-{metric}_parc.pkl"
+    )
     MEASURES: ClassVar = AVAILABLE_MEASURES
 
     def __init__(
@@ -69,3 +74,50 @@ class Parcellation:
             if measure not in self.MEASURES:
                 raise ValueError(f"Invalid measure: {measure}.")
         return {measure: self.MEASURES[measure] for measure in measures}
+
+    def run(self, force: bool = False) -> dict:
+        """
+        Run the parcellation workflow.
+
+        Parameters
+        ----------
+        force : bool
+            Force the generation of the parcellation, by default True
+
+        Returns
+        -------
+        dict
+            Outputs for the parcellation workflow.
+        """
+        outputs = {}
+        for atlas_name, atlas_entities in self.atlases_manager.dwi_atlases.items():
+            outputs[atlas_name] = {}
+            for metric, metric_image in self.tensors_manager.outputs.items():
+                outputs[atlas_name][metric] = {}
+                out_file = self.out_dir / self.OUTPUT_TEMPLATE.format(
+                    atlas=atlas_name,
+                    subject=self.mapper.subject,
+                    session=self.mapper.session,
+                    metric=metric,
+                    label=self.atlases_manager.label,
+                    acq=self.tensors_manager.max_bvalue,
+                    software=self.tensors_manager.software,
+                )
+                if out_file.exists():
+                    if force:
+                        out_file.unlink()
+                    else:
+                        # validate that all measures are present
+                        data = pd.read_pickle(out_file)  # noqa
+                        if all([measure in data.columns for measure in self.measures]):  # noqa
+                            outputs[atlas_name][metric] = out_file
+                            continue
+                df = pd.read_csv(atlas_entities["description_file"], index_col=atlas_entities["index_col"]).copy()
+                for measure_name, measure in self.measures.items():
+                    df[measure_name] = parcellate(
+                        atlas_entities,
+                        metric_image,
+                        measure,
+                    )["value"]
+                df.to_pickle(out_file)
+                outputs[atlas_name][metric] = out_file

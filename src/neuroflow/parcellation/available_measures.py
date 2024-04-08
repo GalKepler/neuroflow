@@ -86,7 +86,8 @@ def iqrmean(data: np.ndarray, threshold=1.5) -> float:
     float
         IQR Filtered Mean
     """
-    q75, q25 = np.nanpercentile(data, [75, 25])
+    q75 = np.nanpercentile(data, 75)
+    q25 = np.nanpercentile(data, 25)
     iqr = q75 - q25
     lower = q25 - threshold * iqr
     upper = q75 + threshold * iqr
