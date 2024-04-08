@@ -18,7 +18,7 @@ class Parcellation:
     Parcellation class for NeuroFlow.
     """
 
-    OUTPUT_TEMPLATE: ClassVar = None
+    OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_atlas-{atlas}_meas-{measure}_parc.nii.gz"
     MEASURES: ClassVar = AVAILABLE_MEASURES
 
     def __init__(
@@ -44,6 +44,7 @@ class Parcellation:
         self.atlases_manager = atlases_manager
         self.mapper = self.tensors_manager.mapper
         self.out_dir = Path(out_dir)
+        self.out_dir.mkdir(parents=True, exist_ok=True)
         self.measures = self._validate_measures(measures)
 
     def _validate_measures(self, measures: Union[str, list]) -> Callable:

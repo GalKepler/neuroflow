@@ -11,6 +11,7 @@ from typing import Union
 from nipype.interfaces import fsl
 
 from neuroflow.atlases.available_atlases.available_atlases import AVAILABLE_ATLASES
+from neuroflow.atlases.utils import generate_gm_mask_from_5tt
 from neuroflow.atlases.utils import qc_atlas_registration
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
@@ -21,9 +22,11 @@ class Atlases:
     """
 
     ATLASES: ClassVar = AVAILABLE_ATLASES
-    OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_{atlas}"
+    OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_label-{label}_{atlas}"
 
-    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Optional[Union[str, list]] = None):
+    def __init__(
+        self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Optional[Union[str, list]] = None, crop_to_gm: Optional[bool] = True
+    ):
         """
         Initialize the Atlases class.
 
@@ -33,11 +36,16 @@ class Atlases:
             An instance of FilesMapper class.
         out_dir : Union[str, Path]
             Path to the output directory.
+        atlases : Optional[Union[str, list]]
+            Atlases to register.
+
         """
         self.mapper = mapper
         self.out_dir = Path(out_dir)
         self.out_dir.mkdir(exist_ok=True, parents=True)
         self.atlases = self._validate_atlas(atlases)
+        self.crop_to_gm = crop_to_gm
+        self.label = "GM" if self.crop_to_gm else "WholeBrain"
 
     def _validate_atlas(self, atlases: Union[str, list]):
         """
@@ -52,6 +60,15 @@ class Atlases:
                 raise ValueError(f"Atlas {atlas} is not available.")
         return {atlas: self.ATLASES[atlas] for atlas in atlases}
 
+    def generate_gm_mask(self):
+        """
+        Generate a grey matter mask.
+        """
+        gm_mask = self.out_dir / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"
+        if not gm_mask.exists():
+            generate_gm_mask_from_5tt(self.mapper.files.get("t1w_5tt"), gm_mask)
+        return gm_mask
+
     def register_atlas_to_t1w(self, force: bool = False):
         """
         Register an atlas to the subject's T1w space.
@@ -65,6 +82,7 @@ class Atlases:
                 session=self.mapper.session,
                 space="T1w",
                 atlas=atlas_base,
+                label=self.label,
             )
             t1w_atlases[atlas]["nifti"] = str(out_file)
             if force:
@@ -74,7 +92,7 @@ class Atlases:
             aw = fsl.ApplyWarp(datatype="int", interp="nn", out_file=str(out_file))
             aw.inputs.in_file = nifti
             aw.inputs.ref_file = self.mapper.files.get("t1w_brain")
-            aw.inputs.mask_file = self.mapper.files.get("t1w_brain_mask")
+            aw.inputs.mask_file = self.mapper.files.get("t1w_brain_mask") if not self.crop_to_gm else self.generate_gm_mask()
             aw.inputs.field_file = self.mapper.files.get("template_to_t1w_warp")
             aw.run()
             qc_atlas_registration(out_file, self.mapper.files.get("t1w_brain"), atlas, "T1w", force=force)
@@ -94,6 +112,7 @@ class Atlases:
                 session=self.mapper.session,
                 space="dwi",
                 atlas=atlas_base,
+                label=self.label,
             )
             dwi_atlases[atlas]["nifti"] = str(out_file)
             if force:
@@ -104,7 +123,11 @@ class Atlases:
             apply_xfm.inputs.in_file = in_file
             apply_xfm.inputs.reference = self.mapper.files.get("b0_brain")
             apply_xfm.inputs.in_matrix_file = self.mapper.files.get("t1w_to_dwi_mat")
-            apply_xfm.run()
+            apply_xfm.inputs.apply_xfm = True
+            res = apply_xfm.run()
+            # clean up the intermediate file
+            Path(res.outputs.out_matrix_file).unlink()
+
             qc_atlas_registration(out_file, self.mapper.files.get("b0_brain"), atlas, "DWI", force=force)
         return dwi_atlases
 
