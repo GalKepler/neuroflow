@@ -112,6 +112,7 @@ class Parcellation:
                         if all([measure in data.columns for measure in self.measures]):  # noqa
                             outputs[atlas_name][metric] = out_file
                             continue
+                out_file.parent.mkdir(parents=True, exist_ok=True)
                 df = pd.read_csv(atlas_entities["description_file"], index_col=atlas_entities["index_col"]).copy()
                 for measure_name, measure in self.measures.items():
                     df[measure_name] = parcellate(
