@@ -60,6 +60,8 @@ class Parcellation:
         Callable
             Measure function.
         """
+        if measures is None:
+            return self.MEASURES
         if isinstance(measures, str):
             measures = [measures]
         for measure in measures:
