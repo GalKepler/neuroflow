@@ -5,6 +5,7 @@ Registrations of atlases to subject's diffusion space.
 import copy
 from pathlib import Path
 from typing import ClassVar
+from typing import Optional
 from typing import Union
 
 from nipype.interfaces import fsl
@@ -22,7 +23,7 @@ class Atlases:
     ATLASES: ClassVar = AVAILABLE_ATLASES
     OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_{atlas}"
 
-    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Union[str, list] = None):  # noqa
+    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Optional[Union[str, list]] = None):
         """
         Initialize the Atlases class.
 
