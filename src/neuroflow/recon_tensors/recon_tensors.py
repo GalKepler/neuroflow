@@ -4,6 +4,7 @@ Reconstruction of diffusion tensors from the diffusion signal.
 
 from pathlib import Path
 from typing import ClassVar
+from typing import Optional
 from typing import Union
 
 from nipype.interfaces.mrtrix3 import DWIExtract
@@ -21,7 +22,7 @@ class ReconTensors:
         "{software}/sub-{subject}_ses-{session}_space-dwi_acq-shell{max_bvalue}_rec-{software}_desc-{metric}_dwiref.nii.gz"
     )
 
-    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], max_bvalue: int = None, bval_tol: int = 50):  # noqa
+    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50):
         """
         Initialize the ReconTensors class.
 
@@ -40,7 +41,7 @@ class ReconTensors:
         self.out_dir.mkdir(parents=True, exist_ok=True)
         self.software = None
 
-    def _filter_bvalues(self, max_bvalue: int = None, bval_tol: int = 50) -> int:  # noqa
+    def _filter_bvalues(self, max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50) -> int:
         """
         Filter the b-values based on the maximum b-value.
         """
@@ -80,7 +81,7 @@ class ReconTensors:
         dwiextract.run()
         return out_files
 
-    def gather_outputs(self) -> dict:
+    def collect_outputs(self) -> dict:
         """
         Gather outputs for the DipyTensors workflow.
 
@@ -101,6 +102,17 @@ class ReconTensors:
             for key in self.OUTPUTS
         }
 
+    def run(self, force: bool = False) -> dict:
+        """
+        Run the workflow.
+
+        Returns
+        -------
+        dict
+            Outputs for the workflow.
+        """
+        raise NotImplementedError
+
     @property
     def filtered_files(self) -> dict:
         """
@@ -114,3 +126,10 @@ class ReconTensors:
         Get the maximum b-value (rounded to the nearest 100)
         """
         return round(max(self.filtered_bvalues), -2)
+
+    @property
+    def outputs(self) -> dict:
+        """
+        Get the outputs.
+        """
+        return self.run()

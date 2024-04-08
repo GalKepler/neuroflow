@@ -4,6 +4,7 @@ Reconstruction of diffusion tensors from the diffusion signal using Dipy.
 
 import warnings
 from pathlib import Path
+from typing import Optional
 from typing import Union
 
 from dipy.workflows.reconst import ReconstDtiFlow
@@ -26,9 +27,9 @@ class DipyTensors(ReconTensors):
         self,
         mapper: FilesMapper,
         out_dir: Union[str, Path],
-        max_bvalue: int = None,  # noqa
-        bval_tol: int = 50,
-        fit_method: str = "NLLS",
+        max_bvalue: Optional[int] = 1000,
+        bval_tol: Optional[int] = 50,
+        fit_method: Optional[str] = "NLLS",
     ):
         """
         Initialize the DipyTensors class.
@@ -46,7 +47,7 @@ class DipyTensors(ReconTensors):
         self.fit_method = fit_method
         self.software = "dipy"
 
-    def gather_inputs(self) -> dict:
+    def collect_inputs(self) -> dict:
         """
         Gather inputs for the DipyTensors workflow.
 
@@ -74,8 +75,8 @@ class DipyTensors(ReconTensors):
         dict
             Outputs for the DipyTensors workflow.
         """
-        inputs = self.gather_inputs()
-        outputs = self.gather_outputs()
+        inputs = self.collect_inputs()
+        outputs = self.collect_outputs()
         out_dir = Path(inputs["out_dir"])
         out_dir.mkdir(parents=True, exist_ok=True)
         if force:

@@ -1,7 +1,39 @@
+import subprocess
 from pathlib import Path
 from typing import Union
 
 from nilearn import plotting
+
+GM_CMDS = [
+    "mrconvert {five_tissue_type} {out_file} -force",
+    "fslroi {out_file} {out_file} 0 2",
+    "fslmaths {out_file} -Tmax -thr 0.5 -bin {out_file} -odt float",
+]
+
+
+def generate_gm_mask_from_5tt(five_tissue_type: Union[str, Path], out_file: Union[str, Path], force: bool = False):
+    """
+    Generate a grey matter mask from a 5TT image.
+
+    Parameters
+    ----------
+    five_tissue_type : Union[str, Path]
+        Path to the 5TT image.
+    out_dir : Union[str, Path]
+        Path to the output directory.
+    force : bool, optional
+        Force the generation of the mask, by default False
+    """
+    five_tissue_type = Path(five_tissue_type)
+    out_file = Path(out_file)
+    if out_file.exists() and not force:
+        print(f"Grey matter mask {out_file} already exists.")
+        return
+    if not five_tissue_type.is_file():
+        raise FileNotFoundError(f"5TT image {five_tissue_type} not found.")
+    for cmd in GM_CMDS:
+        cmd = cmd.format(five_tissue_type=five_tissue_type, out_file=out_file)
+        subprocess.run(cmd, check=True)
 
 
 def qc_atlas_registration(atlas: Union[str, Path], reference: Union[str, Path], atlas_name: str, reference_name: str, force: bool = False):

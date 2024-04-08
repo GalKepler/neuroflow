@@ -27,7 +27,7 @@ class MRTrix3Tensors(ReconTensors):
         self,
         mapper: FilesMapper,
         out_dir: Union[str, Path],
-        max_bvalue: int = None,  # noqa
+        max_bvalue: int = 1000,
         bval_tol: int = 50,
     ):
         """
@@ -45,7 +45,7 @@ class MRTrix3Tensors(ReconTensors):
         super().__init__(mapper, out_dir, max_bvalue, bval_tol)
         self.software = "mrtrix3"
 
-    def gather_inputs(self) -> dict:
+    def collect_inputs(self) -> dict:
         """
         Gather inputs for the DipyTensors workflow.
 
@@ -66,7 +66,7 @@ class MRTrix3Tensors(ReconTensors):
         """
         Fit the diffusion tensor to the diffusion signal.
         """
-        inputs = self.gather_inputs()
+        inputs = self.collect_inputs()
         out_dir = Path(inputs["out_dir"])
         out_dir.mkdir(parents=True, exist_ok=True)
         out_file = out_dir / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_tensor.mif"
@@ -92,7 +92,7 @@ class MRTrix3Tensors(ReconTensors):
             Outputs for the MRTrix3Tensors workflow.
         """
         tensor = self.fit_tensor(force=force)
-        outputs = self.gather_outputs()
+        outputs = self.collect_outputs()
         if force:
             for file in outputs.values():
                 file.unlink(missing_ok=True)
