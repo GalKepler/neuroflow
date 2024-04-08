@@ -46,7 +46,7 @@ class DipyTensors(ReconTensors):
         self.fit_method = fit_method
         self.software = "dipy"
 
-    def gather_inputs(self) -> dict:
+    def collect_inputs(self) -> dict:
         """
         Gather inputs for the DipyTensors workflow.
 
@@ -74,8 +74,8 @@ class DipyTensors(ReconTensors):
         dict
             Outputs for the DipyTensors workflow.
         """
-        inputs = self.gather_inputs()
-        outputs = self.gather_outputs()
+        inputs = self.collect_inputs()
+        outputs = self.collect_outputs()
         out_dir = Path(inputs["out_dir"])
         out_dir.mkdir(parents=True, exist_ok=True)
         if force:

@@ -80,7 +80,7 @@ class ReconTensors:
         dwiextract.run()
         return out_files
 
-    def gather_outputs(self) -> dict:
+    def collect_outputs(self) -> dict:
         """
         Gather outputs for the DipyTensors workflow.
 
@@ -101,6 +101,17 @@ class ReconTensors:
             for key in self.OUTPUTS
         }
 
+    def run(self, force: bool = False) -> dict:
+        """
+        Run the workflow.
+
+        Returns
+        -------
+        dict
+            Outputs for the workflow.
+        """
+        raise NotImplementedError
+
     @property
     def filtered_files(self) -> dict:
         """
@@ -114,3 +125,10 @@ class ReconTensors:
         Get the maximum b-value (rounded to the nearest 100)
         """
         return round(max(self.filtered_bvalues), -2)
+
+    @property
+    def outputs(self) -> dict:
+        """
+        Get the outputs.
+        """
+        return self.run()
