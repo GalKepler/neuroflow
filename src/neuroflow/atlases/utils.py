@@ -1,4 +1,4 @@
-import subprocess
+import os
 from pathlib import Path
 from typing import Union
 
@@ -33,7 +33,7 @@ def generate_gm_mask_from_5tt(five_tissue_type: Union[str, Path], out_file: Unio
         raise FileNotFoundError(f"5TT image {five_tissue_type} not found.")
     for cmd in GM_CMDS:
         cmd = cmd.format(five_tissue_type=five_tissue_type, out_file=out_file)
-        subprocess.run(cmd, check=True)
+        os.system(cmd)  # noqa: S605
 
 
 def qc_atlas_registration(atlas: Union[str, Path], reference: Union[str, Path], atlas_name: str, reference_name: str, force: bool = False):
