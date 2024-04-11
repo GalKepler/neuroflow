@@ -1,11 +1,14 @@
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
+
 class Covariate:
     """
     Class to handle the covariate data
     """
 
-    def __init__(self,mapper: FilesMapper):
+    COVARIATE_SOURCE = None
+
+    def __init__(self, mapper: FilesMapper):
         """
         Constructor for the Covariate class
 
@@ -15,4 +18,3 @@ class Covariate:
             The mapper to the files
         """
         self.mapper = mapper
-        

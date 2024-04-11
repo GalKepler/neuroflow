@@ -47,7 +47,7 @@ class FilesMapper:
         Tuple[str,str]
             A tuple containing the subject's and session's ID.
         """
-        subject = self.path.parent.name
+        subject = self.path.parent.name.zfill(4)
         session = self.path.name
         return subject, session
 
