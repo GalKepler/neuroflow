@@ -22,7 +22,7 @@ def zfmean(data: np.ndarray, threshold=3) -> float:
     m = np.nanmean(data)
     s = np.nanstd(data)
     z_scores = np.abs((data - m) / s)
-    return np.mean(data[z_scores < threshold])
+    return np.nanmean(data[z_scores < threshold])
 
 
 def madmedian(data: np.ndarray, threshold=3) -> float:
@@ -42,7 +42,8 @@ def madmedian(data: np.ndarray, threshold=3) -> float:
         Median of MAD-filtered data
     """
     m = np.nanmedian(data)
-    mad = median_abs_deviation(data)
+    # calculate the median absolute deviation where data is not NaN
+    mad = median_abs_deviation(data, nan_policy="omit")
     filtered_data = data[np.abs(data - m) < threshold * mad]
     return np.nanmedian(filtered_data)
 
