@@ -1,6 +1,9 @@
 from neuroflow.files_mapper.files_mapper import FilesMapper
+from neuroflow.covariates.covariate import Covariate
 from datetime import datetime
-class ParticipantDemographics:
+
+
+class ParticipantDemographics(Covariate):
     """
     Class to handle the participant demographics data
 
@@ -15,9 +18,9 @@ class ParticipantDemographics:
         Parse the timestamp of a session from the session id
     """
 
-    TIMESTAMP_FORMAT = '%Y%m%d%H%M'
+    TIMESTAMP_FORMAT = "%Y%m%d%H%M"
 
-    def __init__(self,mapper: FilesMapper):
+    def __init__(self, mapper: FilesMapper):
         """
         Constructor for the ParticipantDemographics class
 
@@ -26,10 +29,10 @@ class ParticipantDemographics:
         mapper : FilesMapper
             The mapper to the files
         """
-        self.mapper = mapper
+        super().__init__(mapper)
         self.session_timestamp = self._get_timestamp_from_session(self.mapper.session)
 
-    def _get_timestamp_from_session(self,session_id:str) -> datetime:
+    def _get_timestamp_from_session(self, session_id: str) -> datetime:
         """
         Parse the timestamp of a session from the session id
 
@@ -44,6 +47,6 @@ class ParticipantDemographics:
             The timestamp of the session
         """
         try:
-            return datetime.strptime(session_id,self.TIMESTAMP_FORMAT)
+            return datetime.strptime(session_id, self.TIMESTAMP_FORMAT).astimezone()
         except ValueError:
             return None
