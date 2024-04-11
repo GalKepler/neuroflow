@@ -97,10 +97,10 @@ class ParticipantDemographics(Covariate):
         for column, transformation in self.CRF_TRANSFORMATIONS.items():
             subject_row[column] = subject_row[column].apply(transformation)
         subject_row["age_at_scan"] = self._calculate_age_from_dob(subject_row)
-        # convert to long format
-        subject_data = subject_row.melt()
-        subject_data.index = [self.COVARIATE_SOURCE] * subject_data.shape[0]
-        return subject_data.reset_index()
+        subject_row = subject_row.reset_index().rename("index":"crf_index")
+        # add source identifier
+        subject_row.loc["source"] = [self.COVARIATE_SOURCE] * len(subject_row.columns)
+        return subject_row
 
     def _calculate_age_from_dob(self, subject_row: pd.DataFrame):
         """
