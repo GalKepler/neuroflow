@@ -42,3 +42,14 @@ class Covariate:
             return datetime.strptime(session_id, self.TIMESTAMP_FORMAT)  # noqa: DTZ007
         except ValueError:
             return None
+
+    def get_covariates(self):
+        """
+        Get the covariate data
+
+        Returns
+        -------
+        dict
+            The covariate data
+        """
+        raise NotImplementedError
