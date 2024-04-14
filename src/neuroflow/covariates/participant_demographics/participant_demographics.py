@@ -71,20 +71,6 @@ class ParticipantDemographics(Covariate):
         mask = fixed_crf_subjects == self.mapper.subject.lower()
         return self.crf.loc[mask]
 
-    def get_subject_data(self):
-        """
-        Get the data of the subject from the CRF data
-        """
-        subject_row = self.locate_subject_row()
-        subject_row = subject_row[list(self.CRF_COLUMNS_TO_KEEP.keys())].rename(columns=self.CRF_COLUMNS_TO_KEEP)
-        for column, transformation in self.CRF_TRANSFORMATIONS.items():
-            subject_row[column] = subject_row[column].apply(transformation)
-        subject_row["age_at_scan"] = self._calculate_age_from_dob(subject_row)
-        subject_row = subject_row.reset_index().rename({"index": "crf_index"})
-        # add source identifier
-        subject_row.loc["source"] = [self.COVARIATE_SOURCE] * len(subject_row.columns)
-        return subject_row
-
     def _calculate_age_from_dob(self, subject_row: pd.DataFrame):
         """
         Calculate the age from the date of birth
@@ -101,6 +87,19 @@ class ParticipantDemographics(Covariate):
         """
         dob = subject_row["dob"].iloc[0]
         return (self.session_timestamp - dob).days // 365
+
+    def get_covariates(self):
+        """
+        Get the data of the subject from the CRF data
+        """
+        subject_row = self.locate_subject_row()
+        subject_row = subject_row[list(self.CRF_COLUMNS_TO_KEEP.keys())].rename(columns=self.CRF_COLUMNS_TO_KEEP)
+        for column, transformation in self.CRF_TRANSFORMATIONS.items():
+            subject_row[column] = subject_row[column].apply(transformation)
+        subject_row["age_at_scan"] = self._calculate_age_from_dob(subject_row)
+        subject_row = subject_row.reset_index().rename({"index": "crf_index"})
+        covariate = subject_row.iloc[0].to_dict()
+        return {self.COVARIATE_SOURCE: covariate}
 
     @property
     def crf(self):

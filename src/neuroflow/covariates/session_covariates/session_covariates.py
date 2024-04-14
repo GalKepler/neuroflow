@@ -1,12 +1,17 @@
+from datetime import timedelta
 from typing import ClassVar
+
+from geopy.geocoders import Nominatim
+from meteostat import Hourly
+from meteostat import Point
 
 from neuroflow.covariates.covariate import Covariate
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
-class ParticipantDemographics(Covariate):
+class SessionCovariates(Covariate):
     """
-    Class to handle the participant demographics data
+    Class to handle the session covariates
 
     Attributes
     ----------
@@ -21,11 +26,11 @@ class ParticipantDemographics(Covariate):
 
     TIMESTAMP_FORMAT: ClassVar = "%Y%m%d%H%M"
 
-    COVARIATE_SOURCE: ClassVar = "temporal"
+    COVARIATE_SOURCE: ClassVar = {"temporal": "temporal", "environmental": "environmental"}
 
     _crf = None
 
-    def __init__(self, mapper: FilesMapper):
+    def __init__(self, mapper: FilesMapper, location: str = "Tel Aviv University"):
         """
         Constructor for the ParticipantDemographics class
 
@@ -35,3 +40,69 @@ class ParticipantDemographics(Covariate):
             The mapper to the files
         """
         super().__init__(mapper)
+        self.latitude, self.longitude = self._get_lat_lon(location)
+
+    def _get_lat_lon(self, location: str):
+        """
+        Get the latitude and longitude of a location
+
+        Parameters
+        ----------
+        location : str
+            The location to get the latitude and longitude
+
+        Returns
+        -------
+        tuple
+            The latitude and longitude of the location
+        """
+        geolocator = Nominatim(user_agent="neuroflow")
+        location = geolocator.geocode(location)
+        if location is None:
+            raise ValueError(f"Location {location} not found.")
+        return location.latitude, location.longitude
+
+    def _parse_timestamp(self):
+        """
+        Parse the timestamp of the session
+        """
+        return {
+            "timestamp": self.session_timestamp,
+            "year": self.session_timestamp.year,
+            "month": self.session_timestamp.month,
+            "day_of_month": self.session_timestamp.day,
+            "day_of_week": self.session_timestamp.weekday(),
+            "hour": self.session_timestamp.hour,
+        }
+
+    def _get_weather_data(self):
+        """
+        Get the weather data for the session
+        """
+        point = Point(self.latitude, self.longitude)
+        start = self.session_timestamp - timedelta(hours=1)
+        end = self.session_timestamp + timedelta(hours=1)
+        weather = Hourly(point, start, end).fetch().reset_index()
+        # get the row with the closest timestamp
+        weather = weather.iloc[[(weather["time"].sub(self.session_timestamp).abs().idxmin())]]
+        # dtop the time column
+        weather = weather.drop(columns=["time"])
+        # make the timestamp the first column
+        cols = weather.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        weather = weather[cols]
+        return weather.iloc[0].to_dict()
+
+    def get_covariates(self):
+        """
+        Get the session covariates
+
+        Returns
+        -------
+        dict
+            The session covariates
+        """
+        return {
+            self.COVARIATE_SOURCE.get("temporal"): self._parse_timestamp(),
+            self.COVARIATE_SOURCE.get("environmental"): self._get_weather_data(),
+        }
