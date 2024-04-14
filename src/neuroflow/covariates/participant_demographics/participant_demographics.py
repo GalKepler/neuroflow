@@ -2,7 +2,6 @@
 Participant Demographics Covariate Class
 """
 
-from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
 from typing import Union
@@ -32,7 +31,6 @@ class ParticipantDemographics(Covariate):
         Parse the timestamp of a session from the session id
     """
 
-    TIMESTAMP_FORMAT: ClassVar = "%Y%m%d%H%M"
     SUBJECT_ID_COLUMN: ClassVar = "Questionnaire"
     CRF_COLUMNS_TO_KEEP: ClassVar = CRF_COLUMNS_TO_KEEP
     CRF_TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS
@@ -52,7 +50,6 @@ class ParticipantDemographics(Covariate):
         """
         super().__init__(mapper)
         self.google_credentials_path = google_credentials_path
-        self.session_timestamp = self._get_timestamp_from_session(self.mapper.session)
 
     def _load_crf(self, google_credentials_path: Union[str, Path]):
         """
@@ -65,25 +62,6 @@ class ParticipantDemographics(Covariate):
         """
         credentials = load_or_request_credentials(google_credentials_path)
         return get_worksheet(credentials)
-
-    def _get_timestamp_from_session(self, session_id: str) -> datetime:
-        """
-        Parse the timestamp of a session from the session id
-
-        Parameters
-        ----------
-        session_id : str
-            The id of the session
-
-        Returns
-        -------
-        datetime
-            The timestamp of the session
-        """
-        try:
-            return datetime.strptime(session_id, self.TIMESTAMP_FORMAT)  # noqa: DTZ007
-        except ValueError:
-            return None
 
     def locate_subject_row(self):
         """
