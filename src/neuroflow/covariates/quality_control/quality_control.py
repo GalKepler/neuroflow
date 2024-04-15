@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import ClassVar
 from typing import Union
@@ -5,6 +6,7 @@ from typing import Union
 from nipype.interfaces import fsl
 
 from neuroflow.covariates.covariate import Covariate
+from neuroflow.covariates.quality_control.utils import QC_JSON
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
@@ -22,6 +24,10 @@ class QualityControl(Covariate):
     get_covariates() -> dict
         Get the quality control covariates
     """
+
+    EDDY_QC_FLAG: ClassVar = "qc.json"
+
+    EDDY_QC_JSON_PARSER: ClassVar = QC_JSON
 
     COVARIATE_SOURCE: ClassVar = "QC"
 
@@ -86,13 +92,38 @@ class QualityControl(Covariate):
         """
         Run the eddy quality control
         """
+        output_directory = self.out_dir / "eddy_qc"
+        flag = Path(output_directory / self.EDDY_QC_FLAG)
+        if flag.exists():
+            return flag
         inputs = self._prepare_inputs()
         changed_files = self._pre_eddy_qc()
         eddy_qc = fsl.EddyQuad(**inputs)
-        eddy_qc.inputs.output_dir = str(self.out_dir / "eddy_qc")
+        eddy_qc.inputs.output_dir = output_directory
         res = eddy_qc.run()
         self._post_eddy_qc(changed_files)
-        return res
+        return Path(res.outputs.qc_json)
+
+    def get_quality_control(self):
+        """
+        Parse the quality control json
+
+        Parameters
+        ----------
+        qc_json : Path
+            The path to the quality control json
+        """
+        qc_json = self._run_eddy_qc()
+        with qc_json.open("r") as f:
+            qc_dict = json.load(f)
+        result = {}
+        for key, value in self.EDDY_QC_JSON_PARSER.items():
+            value = value["func"](qc_dict, **value["keys"])
+            if isinstance(value, dict):
+                result.update(value)
+            else:
+                result[key] = value
+        return result
 
     def get_covariates(self) -> dict:
         """
@@ -103,4 +134,4 @@ class QualityControl(Covariate):
         dict
             The quality control covariates
         """
-        return {"quality_control": self.mapper.get_quality_control()}
+        return {"quality_control": self.get_quality_control()}
