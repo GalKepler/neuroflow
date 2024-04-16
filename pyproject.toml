@@ -1,6 +1,68 @@
 [build-system]
-requires = ["setuptools>=30.3.0"]
+requires = ["setuptools>=30.3.0","wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "neuroflow"
+version = "0.1.0"
+description="NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced analysis and visualization for neuroimaging research."
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Gal Kepler", email = "galkepler@gmail.com"}]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Neuroimaging/Neuroscience",
+    ]
+dependencies = [
+    "geopy~=2.4",
+    "gspread~=6.1",
+    "Jinja2~=3.1",
+    "meteostat~=1.6",
+    "nibabel~=5.2",
+    "nilearn~=0.10",
+    "nipype~=1.8",
+    "numpy~=1.26",
+    "oauth2client~=4.1",
+    "pandas~=2.2",
+    "scipy~=1.13",
+    "setuptools~=68.2",
+    "setuptools~=65.5",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest~=8.1",
+]
+
+[project.urls]
+Homepage = "https://neuroflow.readthedocs.io/"
+Documentation = "https://neuroflow.readthedocs.io/"
+Repository = "https://github.com/GalKepler/neuroflow"
+Issues = "https://github.com/GalKepler/neuroflow/issues"
+Changelog = "https://neuroflow.readthedocs.io/en/latest/changelog.html"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+zip-safe = false
+
 
 [tool.ruff]
 extend-exclude = ["static", "ci/templates"]
