@@ -1,7 +1,7 @@
 .. raw:: html
 
-   <img src="assets/neuroflow.png" align="center" width="300px">
-   
+   <img src="assets/neuroflow.png" align="right" width="300px">
+
 
 ========
 Overview
