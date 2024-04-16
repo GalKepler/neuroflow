@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Union
+
 import gspread
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
@@ -41,8 +42,8 @@ CRF_TRANSFORMATIONS = {
 def load_or_request_credentials(credentials_path: Union[str, Path]) -> ServiceAccountCredentials:
     try:
         credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, SCOPES)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
+    except FileNotFoundError as err:
+        raise FileNotFoundError(f"Credentials file not found at {credentials_path}") from err
     return credentials
 
 
