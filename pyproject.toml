@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=69.5", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -35,7 +35,11 @@ dependencies = [
     "ipywidgets~=8.1",
     "virtualenv~=20.25",
     "tox~=4.14",
-    "setuptools~=68.2",
+    "black~=24.4",
+    "flake8~=7.0",
+    "isort~=5.13",
+    "ruff~=0.3",
+    "setuptools~=69.5",
 ]
 
 [project.optional-dependencies]
