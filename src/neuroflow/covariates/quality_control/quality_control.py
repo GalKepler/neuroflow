@@ -5,7 +5,7 @@ from typing import Union
 
 from nipype.interfaces import fsl
 
-from neuroflow.covariates.covariate import Covariate
+from neuroflow.covariates import Covariate
 from neuroflow.covariates.quality_control.utils import QC_JSON
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
@@ -30,8 +30,9 @@ class QualityControl(Covariate):
     EDDY_QC_JSON_PARSER: ClassVar = QC_JSON
 
     COVARIATE_SOURCE: ClassVar = "QC"
+    DIRECTORY_NAME: ClassVar = "quality_control"
 
-    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path]):
+    def __init__(self, mapper: FilesMapper, output_directory: Union[str, Path]):
         """
         Constructor for the QualityControl class
 
@@ -40,9 +41,7 @@ class QualityControl(Covariate):
         mapper : FilesMapper
             The mapper to the files
         """
-        super().__init__(mapper)
-        self.out_dir = Path(out_dir)
-        self.out_dir.mkdir(parents=True, exist_ok=True)
+        super().__init__(mapper, output_directory)
 
     def _fix_file_name(self, file: Path):
         """
@@ -92,16 +91,19 @@ class QualityControl(Covariate):
         """
         Run the eddy quality control
         """
-        output_directory = self.out_dir / "eddy_qc"
+        output_directory = self.output_directory / "eddy_qc"
         flag = Path(output_directory / self.EDDY_QC_FLAG)
         if flag.exists():
             return flag
         inputs = self._prepare_inputs()
         changed_files = self._pre_eddy_qc()
-        eddy_qc = fsl.EddyQuad(**inputs)
-        eddy_qc.inputs.output_dir = output_directory
-        res = eddy_qc.run()
-        self._post_eddy_qc(changed_files)
+        try:
+            eddy_qc = fsl.EddyQuad(**inputs)
+            eddy_qc.inputs.output_dir = output_directory
+            res = eddy_qc.run()
+        except Exception as e:
+            self._post_eddy_qc(changed_files)
+            raise e
         return Path(res.outputs.qc_json)
 
     def get_quality_control(self):

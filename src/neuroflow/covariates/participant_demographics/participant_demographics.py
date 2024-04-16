@@ -4,11 +4,12 @@ Participant Demographics Covariate Class
 
 from pathlib import Path
 from typing import ClassVar
+from typing import Optional
 from typing import Union
 
 import pandas as pd
 
-from neuroflow.covariates import Covariate
+from neuroflow.covariates.covariate import Covariate
 from neuroflow.covariates.participant_demographics.utils import CRF_COLUMNS_TO_KEEP
 from neuroflow.covariates.participant_demographics.utils import CRF_TRANSFORMATIONS
 from neuroflow.covariates.participant_demographics.utils import get_worksheet
@@ -36,10 +37,11 @@ class ParticipantDemographics(Covariate):
     CRF_TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS
 
     COVARIATE_SOURCE: ClassVar = "demographics"
+    DIRECTORY_NAME: ClassVar = "demographics"
 
     _crf = None
 
-    def __init__(self, mapper: FilesMapper, google_credentials_path: Union[str, Path]):
+    def __init__(self, mapper: FilesMapper, google_credentials_path: Union[str, Path], output_directory: Optional[Union[str, Path]] = None):
         """
         Constructor for the ParticipantDemographics class
 
@@ -48,7 +50,7 @@ class ParticipantDemographics(Covariate):
         mapper : FilesMapper
             The mapper to the files
         """
-        super().__init__(mapper)
+        super().__init__(mapper, output_directory)
         self.google_credentials_path = google_credentials_path
 
     def _load_crf(self, google_credentials_path: Union[str, Path]):
