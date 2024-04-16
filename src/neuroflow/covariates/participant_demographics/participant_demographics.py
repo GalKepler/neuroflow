@@ -8,7 +8,7 @@ from typing import Union
 
 import pandas as pd
 
-from neuroflow.covariates.covariate import Covariate
+from neuroflow.covariates import Covariate
 from neuroflow.covariates.participant_demographics.utils import CRF_COLUMNS_TO_KEEP
 from neuroflow.covariates.participant_demographics.utils import CRF_TRANSFORMATIONS
 from neuroflow.covariates.participant_demographics.utils import get_worksheet

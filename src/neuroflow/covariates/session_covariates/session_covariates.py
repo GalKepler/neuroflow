@@ -5,7 +5,7 @@ from geopy.geocoders import Nominatim
 from meteostat import Hourly
 from meteostat import Point
 
-from neuroflow.covariates.covariate import Covariate
+from neuroflow.covariates import Covariate
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
