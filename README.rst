@@ -38,11 +38,12 @@ NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced anal
 Features
 --------
 
-* Estimation of tensor derivatives (FA, MD, AD, RD, etc.) using either [MRtrix3](https://www.mrtrix.org/) or [DIPY](https://dipy.org/).
+* Estimation of tensor derivatives (FA, MD, AD, RD, etc.) using either `MRtrix3 <https://www.mrtrix.org/>`_ or `DIPY <https://dipy.org/>`_.
 * Registration of numerous volumetric parcellation atlases to subjects' native T1w and DWI images.
 * Estimation of numerous distribution metrices (e.g. mean, median, IQR-mean, etc.) of diffusion metrics within each parcellation unit.
 * Automatic extraction of available covariates originating from different sources (demographics, temporal, environmental).
 * Quality control of the preprocessing of the diffusion MRI data.
+
 
 
 Credits
