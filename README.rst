@@ -1,5 +1,8 @@
-.. image:: assets/neuroflow.png
-    :align: center
+.. raw:: html
+
+    <div style="text-align: center">
+        <img src="assets/neuroflow.png" alt="My Project Logo">
+    </div>
 
 ========
 Overview
