@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import ClassVar
+from typing import Optional
 
 from geopy.geocoders import Nominatim
 from meteostat import Hourly
@@ -25,12 +26,13 @@ class SessionCovariates(Covariate):
     """
 
     TIMESTAMP_FORMAT: ClassVar = "%Y%m%d%H%M"
-
-    COVARIATE_SOURCE: ClassVar = {"temporal": "temporal", "environmental": "environmental"}
+    COVARIATE_SOURCE: ClassVar = "contextual"
+    INCLUDED_SOURCES: ClassVar = {"temporal": "temporal", "environmental": "environmental"}
+    DIRECTORY_NAME: ClassVar = "contextual"
 
     _crf = None
 
-    def __init__(self, mapper: FilesMapper, location: str = "Tel Aviv University"):
+    def __init__(self, mapper: FilesMapper, output_directory: Optional[str] = None, location: str = "Tel Aviv University"):
         """
         Constructor for the ParticipantDemographics class
 
@@ -39,7 +41,7 @@ class SessionCovariates(Covariate):
         mapper : FilesMapper
             The mapper to the files
         """
-        super().__init__(mapper)
+        super().__init__(mapper, output_directory)
         self.latitude, self.longitude = self._get_lat_lon(location)
 
     def _get_lat_lon(self, location: str):
@@ -103,6 +105,6 @@ class SessionCovariates(Covariate):
             The session covariates
         """
         return {
-            self.COVARIATE_SOURCE.get("temporal"): self._parse_timestamp(),
-            self.COVARIATE_SOURCE.get("environmental"): self._get_weather_data(),
+            self.INCLUDED_SOURCES.get("temporal"): self._parse_timestamp(),
+            self.INCLUDED_SOURCES.get("environmental"): self._get_weather_data(),
         }
