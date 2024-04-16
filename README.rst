@@ -1,8 +1,7 @@
-.. image:: assets/neuroflow.png
-        :alt: NeuroFlow
-        :align: center
-        :height: 200px
-        :width: 200px
+.. raw:: html
+
+   <img src="assets/neuroflow.png" align="center" width="300px">
+   
 
 ========
 Overview
