@@ -1,3 +1,4 @@
+import warnings
 from datetime import timedelta
 from typing import ClassVar
 from typing import Optional
@@ -8,6 +9,8 @@ from meteostat import Point
 
 from neuroflow.covariates import Covariate
 from neuroflow.files_mapper.files_mapper import FilesMapper
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 class SessionCovariates(Covariate):

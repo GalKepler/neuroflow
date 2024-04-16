@@ -45,7 +45,6 @@ class Covariate:
         if output_directory is None:
             return None
         output_directory = Path(output_directory)
-        print(output_directory)
         flags = [
             output_directory.parent.name == f"ses-{self.mapper.session}",
             output_directory.parent.parent.name == f"sub-{self.mapper.subject}",

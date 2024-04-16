@@ -1,3 +1,4 @@
+import pickle
 from pathlib import Path
 from typing import ClassVar
 from typing import Optional
@@ -8,9 +9,9 @@ from neuroflow.covariates.available_qc_measures import get_available_measures
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
-class QCManager(Covariate):
+class CovariatesCollector(Covariate):
     """
-    QCManager class is responsible for gathering all QC
+    CovariatesCollector class is responsible for gathering all QC
     measures available for a participant.
     """
 
@@ -39,9 +40,9 @@ class QCManager(Covariate):
         """
         super().__init__(mapper, output_directory)
         self.google_credentials_path = Path(google_credentials_path)
-        self.qc_measures = self._get_qc_measures(sources)
+        self.qc_measures = self._get_covariates(sources)
 
-    def _get_qc_measures(self, sources: Optional[Union[str, list]] = None):
+    def _get_covariates(self, sources: Optional[Union[str, list]] = None):
         """
         Get the QC measures for the participant.
 
@@ -70,7 +71,7 @@ class QCManager(Covariate):
         # return a dictionary with the inputs from self
         return {input: getattr(self, input, None) for input in inputs}
 
-    def _collect_qc_measures(self):
+    def _collect_covariates(self):
         """
         Collect QC measures for the participant.
         """
@@ -81,3 +82,17 @@ class QCManager(Covariate):
             runner = runner(**inputs)
             results.update(runner.get_covariates())
         return results
+
+    def save_to_file(self):
+        """
+        Save the covariates to a pickle file.
+        """
+        with Path.open(self.output_directory / "covariates.pkl", "wb") as file:
+            pickle.dump(self.covariates, file)
+
+    @property
+    def covariates(self):
+        """
+        Get the quality control covariates
+        """
+        return self._collect_covariates()
