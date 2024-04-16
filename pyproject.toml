@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -34,6 +34,7 @@ dependencies = [
     "dipy~=1.9",
     "ipywidgets~=8.1",
     "virtualenv~=20.25",
+    "tox~=4.14",
     "setuptools~=68.2",
 ]
 
