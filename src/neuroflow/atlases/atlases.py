@@ -24,8 +24,14 @@ class Atlases:
     ATLASES: ClassVar = AVAILABLE_ATLASES
     OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_label-{label}_{atlas}"
 
+    DIRECTORY_NAME: ClassVar = "atlases"
+
     def __init__(
-        self, mapper: FilesMapper, out_dir: Union[str, Path], atlases: Optional[Union[str, list]] = None, crop_to_gm: Optional[bool] = True
+        self,
+        mapper: FilesMapper,
+        output_directory: Union[str, Path],
+        atlases: Optional[Union[str, list]] = None,
+        crop_to_gm: Optional[bool] = True,
     ):
         """
         Initialize the Atlases class.
@@ -41,11 +47,38 @@ class Atlases:
 
         """
         self.mapper = mapper
-        self.out_dir = Path(out_dir)
-        self.out_dir.mkdir(exist_ok=True, parents=True)
+        self.output_directory = self._gen_output_directory(output_directory)
         self.atlases = self._validate_atlas(atlases)
         self.crop_to_gm = crop_to_gm
         self.label = "GM" if self.crop_to_gm else "WholeBrain"
+
+    def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
+        """
+        Generate output directory for QC measures.
+
+        Parameters
+        ----------
+        output_directory : Optional[str], optional
+            Path to the output directory, by default None
+
+        Returns
+        -------
+        Path
+            Path to the output directory
+        """
+        if output_directory is None:
+            return None
+        output_directory = Path(output_directory)
+        flags = [
+            output_directory.parent.name == f"ses-{self.mapper.session}",
+            output_directory.parent.parent.name == f"sub-{self.mapper.subject}",
+        ]
+        if all(flags):
+            output_directory = output_directory / self.DIRECTORY_NAME
+        else:
+            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+        output_directory.mkdir(parents=True, exist_ok=True)
+        return output_directory
 
     def _validate_atlas(self, atlases: Union[str, list]):
         """
@@ -64,7 +97,7 @@ class Atlases:
         """
         Generate a grey matter mask.
         """
-        gm_mask = self.out_dir / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"
+        gm_mask = self.output_directory / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"
         if not gm_mask.exists():
             generate_gm_mask_from_5tt(self.mapper.files.get("t1w_5tt"), gm_mask)
         return gm_mask
@@ -77,7 +110,7 @@ class Atlases:
         for atlas, atlas_entities in self.atlases.items():
             nifti = atlas_entities["nifti"]
             atlas_base = Path(nifti).name.replace("space-MNI152_", "")
-            out_file = self.out_dir / self.OUTPUT_TEMPLATE.format(
+            out_file = self.output_directory / self.OUTPUT_TEMPLATE.format(
                 subject=self.mapper.subject,
                 session=self.mapper.session,
                 space="T1w",
@@ -107,7 +140,7 @@ class Atlases:
             nifti = atlas_entities["nifti"]
             in_file = self.t1w_atlases[atlas]["nifti"]
             atlas_base = Path(nifti).name.replace("space-MNI152_", "")
-            out_file = self.out_dir / self.OUTPUT_TEMPLATE.format(
+            out_file = self.output_directory / self.OUTPUT_TEMPLATE.format(
                 subject=self.mapper.subject,
                 session=self.mapper.session,
                 space="dwi",

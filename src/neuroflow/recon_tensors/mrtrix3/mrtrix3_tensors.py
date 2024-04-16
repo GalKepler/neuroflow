@@ -26,7 +26,7 @@ class MRTrix3Tensors(ReconTensors):
     def __init__(
         self,
         mapper: FilesMapper,
-        out_dir: Union[str, Path],
+        output_directory: Union[str, Path],
         max_bvalue: int = 1000,
         bval_tol: int = 50,
     ):
@@ -42,7 +42,7 @@ class MRTrix3Tensors(ReconTensors):
         max_bvalue : int
             Maximum b-value to use for the reconstruction.
         """
-        super().__init__(mapper, out_dir, max_bvalue, bval_tol)
+        super().__init__(mapper=mapper, output_directory=output_directory, max_bvalue=max_bvalue, bval_tol=bval_tol)
         self.software = "mrtrix3"
 
     def collect_inputs(self) -> dict:
@@ -58,7 +58,7 @@ class MRTrix3Tensors(ReconTensors):
             "in_file": self.filtered_files.get("dwi_file"),
             "grad_fsl": (self.filtered_files.get("bvec_file"), self.filtered_files.get("bval_file")),
             "in_mask": self.mapper.files.get("b0_brain_mask"),
-            "out_dir": self.out_dir / self.software,
+            "out_dir": self.output_directory / self.software,
         }
         return {key: str(value) for key, value in inputs.items()}
 

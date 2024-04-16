@@ -22,7 +22,11 @@ class ReconTensors:
         "{software}/sub-{subject}_ses-{session}_space-dwi_acq-shell{max_bvalue}_rec-{software}_desc-{metric}_dwiref.nii.gz"
     )
 
-    def __init__(self, mapper: FilesMapper, out_dir: Union[str, Path], max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50):
+    DIRECTORY_NAME: ClassVar = "tensors"
+
+    def __init__(
+        self, mapper: FilesMapper, output_directory: Union[str, Path], max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50
+    ):
         """
         Initialize the ReconTensors class.
 
@@ -36,10 +40,37 @@ class ReconTensors:
             Maximum b-value to use for the reconstruction.
         """
         self.mapper = mapper
-        self.out_dir = Path(out_dir)
+        self.output_directory = self._gen_output_directory(output_directory)
         self.filtered_bvalues = self._filter_bvalues(max_bvalue, bval_tol)
-        self.out_dir.mkdir(parents=True, exist_ok=True)
         self.software = None
+
+    def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
+        """
+        Generate output directory for QC measures.
+
+        Parameters
+        ----------
+        output_directory : Optional[str], optional
+            Path to the output directory, by default None
+
+        Returns
+        -------
+        Path
+            Path to the output directory
+        """
+        if output_directory is None:
+            return None
+        output_directory = Path(output_directory)
+        flags = [
+            output_directory.parent.name == f"ses-{self.mapper.session}",
+            output_directory.parent.parent.name == f"sub-{self.mapper.subject}",
+        ]
+        if all(flags):
+            output_directory = output_directory / self.DIRECTORY_NAME
+        else:
+            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+        output_directory.mkdir(parents=True, exist_ok=True)
+        return output_directory
 
     def _filter_bvalues(self, max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50) -> int:
         """
@@ -65,7 +96,7 @@ class ReconTensors:
         """
         Crop the diffusion signal to the maximum b-value.
         """
-        out_template = str(self.out_dir / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_acq-shell{self.max_bvalue}_dwi")
+        out_template = str(self.output_directory / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_acq-shell{self.max_bvalue}_dwi")
         out_files = {}
         for key, extension in zip(["dwi_file", "bval_file", "bvec_file"], [".nii.gz", ".bval", ".bvec"]):
             out_files[key] = Path(out_template + extension)
@@ -91,7 +122,7 @@ class ReconTensors:
             Outputs for the DipyTensors workflow.
         """
         return {
-            key: self.out_dir
+            key: self.output_directory
             / self.OUTPUT_TEMPLATE.format(
                 subject=self.mapper.subject,
                 session=self.mapper.session,

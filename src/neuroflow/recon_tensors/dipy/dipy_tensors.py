@@ -26,7 +26,7 @@ class DipyTensors(ReconTensors):
     def __init__(
         self,
         mapper: FilesMapper,
-        out_dir: Union[str, Path],
+        output_directory: Union[str, Path],
         max_bvalue: Optional[int] = 1000,
         bval_tol: Optional[int] = 50,
         fit_method: Optional[str] = "NLLS",
@@ -43,7 +43,7 @@ class DipyTensors(ReconTensors):
         max_bvalue : int
             Maximum b-value to use for the reconstruction.
         """
-        super().__init__(mapper, out_dir, max_bvalue, bval_tol)
+        super().__init__(mapper=mapper, output_directory=output_directory, max_bvalue=max_bvalue, bval_tol=bval_tol)
         self.fit_method = fit_method
         self.software = "dipy"
 
@@ -61,7 +61,7 @@ class DipyTensors(ReconTensors):
             "bvalues_files": self.filtered_files.get("bval_file"),
             "bvectors_files": self.filtered_files.get("bvec_file"),
             "mask_files": self.mapper.files.get("b0_brain_mask"),
-            "out_dir": self.out_dir / self.software,
+            "out_dir": self.output_directory / self.software,
             "fit_method": self.fit_method,
         }
         return {key: str(value) for key, value in inputs.items()}

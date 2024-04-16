@@ -26,11 +26,13 @@ class Parcellation:
     )
     MEASURES: ClassVar = AVAILABLE_MEASURES
 
+    DIRECTORY_NAME: ClassVar = "parcellations"
+
     def __init__(
         self,
         tensors_manager: ReconTensors,
         atlases_manager: Atlases,
-        out_dir: Union[str, Path],
+        output_directory: Union[str, Path],
         measures: Optional[Union[str, list]] = None,
     ):
         """
@@ -48,9 +50,36 @@ class Parcellation:
         self.tensors_manager = tensors_manager
         self.atlases_manager = atlases_manager
         self.mapper = self.tensors_manager.mapper
-        self.out_dir = Path(out_dir)
-        self.out_dir.mkdir(parents=True, exist_ok=True)
+        self.output_directory = self._gen_output_directory(output_directory)
         self.measures = self._validate_measures(measures)
+
+    def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
+        """
+        Generate output directory for QC measures.
+
+        Parameters
+        ----------
+        output_directory : Optional[str], optional
+            Path to the output directory, by default None
+
+        Returns
+        -------
+        Path
+            Path to the output directory
+        """
+        if output_directory is None:
+            return None
+        output_directory = Path(output_directory)
+        flags = [
+            output_directory.parent.name == f"ses-{self.mapper.session}",
+            output_directory.parent.parent.name == f"sub-{self.mapper.subject}",
+        ]
+        if all(flags):
+            output_directory = output_directory / self.DIRECTORY_NAME
+        else:
+            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+        output_directory.mkdir(parents=True, exist_ok=True)
+        return output_directory
 
     def _validate_measures(self, measures: Union[str, list]) -> Callable:
         """
@@ -94,7 +123,7 @@ class Parcellation:
             outputs[atlas_name] = {}
             for metric, metric_image in self.tensors_manager.outputs.items():
                 outputs[atlas_name][metric] = {}
-                out_file = self.out_dir / self.OUTPUT_TEMPLATE.format(
+                out_file = self.output_directory / self.OUTPUT_TEMPLATE.format(
                     atlas=atlas_name,
                     subject=self.mapper.subject,
                     session=self.mapper.session,
