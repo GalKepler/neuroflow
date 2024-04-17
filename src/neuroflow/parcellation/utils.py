@@ -1,13 +1,14 @@
 from pathlib import Path
-from typing import Callable
-from typing import Union
+from typing import Callable, Union
 
 import nibabel as nib
 import numpy as np
 import pandas as pd
 
 
-def parcellate(atlas_entities: dict, metric_image: Union[str, Path], measure: Callable) -> pd.DataFrame:
+def parcellate(
+    atlas_entities: dict, metric_image: Union[str, Path], measure: Callable
+) -> pd.DataFrame:
     """
     Collects a measure for each region of an atlas.
 
@@ -25,7 +26,9 @@ def parcellate(atlas_entities: dict, metric_image: Union[str, Path], measure: Ca
     pd.DataFrame
         Dataframe with the measure for each region of the atlas.
     """
-    atlas_description = pd.read_csv(atlas_entities["description_file"], index_col=atlas_entities["index_col"]).copy()
+    atlas_description = pd.read_csv(
+        atlas_entities["description_file"], index_col=atlas_entities["index_col"]
+    ).copy()
     atlas_description["value"] = np.nan
     atlas_data = nib.load(atlas_entities["nifti"]).get_fdata()
     metric_data = nib.load(metric_image).get_fdata()

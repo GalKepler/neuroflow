@@ -6,7 +6,10 @@ import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 
 # define scopes
-SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+SCOPES = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+]
 
 # Sheet name
 SHEET_NAME = "CRF YA"
@@ -39,16 +42,24 @@ CRF_TRANSFORMATIONS = {
 }
 
 
-def load_or_request_credentials(credentials_path: Union[str, Path]) -> ServiceAccountCredentials:
+def load_or_request_credentials(
+    credentials_path: Union[str, Path]
+) -> ServiceAccountCredentials:
     try:
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            credentials_path, SCOPES
+        )
     except FileNotFoundError as err:
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}") from err
+        raise FileNotFoundError(
+            f"Credentials file not found at {credentials_path}"
+        ) from err
     return credentials
 
 
 def get_worksheet(
-    credentials: ServiceAccountCredentials, sheet_name: str = SHEET_NAME, worksheet_name: str = WORKSHEET_NAME
+    credentials: ServiceAccountCredentials,
+    sheet_name: str = SHEET_NAME,
+    worksheet_name: str = WORKSHEET_NAME,
 ) -> pd.DataFrame:
     """
     Get a worksheet from a Google Sheet

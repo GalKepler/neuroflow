@@ -1,4 +1,9 @@
-def parse_pct_b_outliers(qc_dict: dict, key: str = "qc_outliers_b", pct_key: str = "pct_outliers_b", unique_b_key="data_unique_bvals"):
+def parse_pct_b_outliers(
+    qc_dict: dict,
+    key: str = "qc_outliers_b",
+    pct_key: str = "pct_outliers_b",
+    unique_b_key="data_unique_bvals",
+):
     """
     Parse the percentage of outliers per b value.
 

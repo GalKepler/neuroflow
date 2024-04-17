@@ -14,6 +14,11 @@ repos:
     rev: 24.4.0
     hooks:
       - id: black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2  # Specify the version of isort you want to use
+    hooks:
+      - id: isort
+        args: ['--profile', 'black']  # Ensuring compatibility with Black
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

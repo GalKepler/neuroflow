@@ -3,17 +3,17 @@ Participant Demographics Covariate Class
 """
 
 from pathlib import Path
-from typing import ClassVar
-from typing import Optional
-from typing import Union
+from typing import ClassVar, Optional, Union
 
 import pandas as pd
 
 from neuroflow.covariates.covariate import Covariate
-from neuroflow.covariates.participant_demographics.utils import CRF_COLUMNS_TO_KEEP
-from neuroflow.covariates.participant_demographics.utils import CRF_TRANSFORMATIONS
-from neuroflow.covariates.participant_demographics.utils import get_worksheet
-from neuroflow.covariates.participant_demographics.utils import load_or_request_credentials
+from neuroflow.covariates.participant_demographics.utils import (
+    CRF_COLUMNS_TO_KEEP,
+    CRF_TRANSFORMATIONS,
+    get_worksheet,
+    load_or_request_credentials,
+)
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
@@ -41,7 +41,12 @@ class ParticipantDemographics(Covariate):
 
     _crf = None
 
-    def __init__(self, mapper: FilesMapper, google_credentials_path: Union[str, Path], output_directory: Optional[Union[str, Path]] = None):
+    def __init__(
+        self,
+        mapper: FilesMapper,
+        google_credentials_path: Union[str, Path],
+        output_directory: Optional[Union[str, Path]] = None,
+    ):
         """
         Constructor for the ParticipantDemographics class
 
@@ -69,7 +74,12 @@ class ParticipantDemographics(Covariate):
         """
         Locate the row of the subject in the CRF data
         """
-        fixed_crf_subjects = self.crf[self.SUBJECT_ID_COLUMN].str.lower().str.zfill(4).str.replace("_", "")
+        fixed_crf_subjects = (
+            self.crf[self.SUBJECT_ID_COLUMN]
+            .str.lower()
+            .str.zfill(4)
+            .str.replace("_", "")
+        )
         mask = fixed_crf_subjects == self.mapper.subject.lower()
         return self.crf.loc[mask]
 
@@ -95,7 +105,9 @@ class ParticipantDemographics(Covariate):
         Get the data of the subject from the CRF data
         """
         subject_row = self.locate_subject_row()
-        subject_row = subject_row[list(self.CRF_COLUMNS_TO_KEEP.keys())].rename(columns=self.CRF_COLUMNS_TO_KEEP)
+        subject_row = subject_row[list(self.CRF_COLUMNS_TO_KEEP.keys())].rename(
+            columns=self.CRF_COLUMNS_TO_KEEP
+        )
         for column, transformation in self.CRF_TRANSFORMATIONS.items():
             subject_row[column] = subject_row[column].apply(transformation)
         subject_row["age_at_scan"] = self._calculate_age_from_dob(subject_row)

@@ -1,11 +1,9 @@
 import warnings
 from datetime import timedelta
-from typing import ClassVar
-from typing import Optional
+from typing import ClassVar, Optional
 
 from geopy.geocoders import Nominatim
-from meteostat import Hourly
-from meteostat import Point
+from meteostat import Hourly, Point
 
 from neuroflow.covariates import Covariate
 from neuroflow.files_mapper.files_mapper import FilesMapper
@@ -30,12 +28,20 @@ class SessionCovariates(Covariate):
 
     TIMESTAMP_FORMAT: ClassVar = "%Y%m%d%H%M"
     COVARIATE_SOURCE: ClassVar = "contextual"
-    INCLUDED_SOURCES: ClassVar = {"temporal": "temporal", "environmental": "environmental"}
+    INCLUDED_SOURCES: ClassVar = {
+        "temporal": "temporal",
+        "environmental": "environmental",
+    }
     DIRECTORY_NAME: ClassVar = "contextual"
 
     _crf = None
 
-    def __init__(self, mapper: FilesMapper, output_directory: Optional[str] = None, location: str = "Tel Aviv University"):
+    def __init__(
+        self,
+        mapper: FilesMapper,
+        output_directory: Optional[str] = None,
+        location: str = "Tel Aviv University",
+    ):
         """
         Constructor for the ParticipantDemographics class
 
@@ -89,7 +95,9 @@ class SessionCovariates(Covariate):
         end = self.session_timestamp + timedelta(hours=1)
         weather = Hourly(point, start, end).fetch().reset_index()
         # get the row with the closest timestamp
-        weather = weather.iloc[[(weather["time"].sub(self.session_timestamp).abs().idxmin())]]
+        weather = weather.iloc[
+            [(weather["time"].sub(self.session_timestamp).abs().idxmin())]
+        ]
         # dtop the time column
         weather = weather.drop(columns=["time"])
         # make the timestamp the first column

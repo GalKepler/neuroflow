@@ -1,7 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from typing import ClassVar
-from typing import Optional
+from typing import ClassVar, Optional
 
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
@@ -52,7 +51,12 @@ class Covariate:
         if all(flags):
             output_directory = output_directory / self.DIRECTORY_NAME
         else:
-            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+            output_directory = (
+                Path(output_directory)
+                / f"sub-{self.mapper.subject}"
+                / f"ses-{self.mapper.session}"
+                / self.DIRECTORY_NAME
+            )
         output_directory.mkdir(parents=True, exist_ok=True)
         return output_directory
 

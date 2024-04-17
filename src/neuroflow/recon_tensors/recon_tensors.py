@@ -3,9 +3,7 @@ Reconstruction of diffusion tensors from the diffusion signal.
 """
 
 from pathlib import Path
-from typing import ClassVar
-from typing import Optional
-from typing import Union
+from typing import ClassVar, Optional, Union
 
 from nipype.interfaces.mrtrix3 import DWIExtract
 
@@ -19,13 +17,17 @@ class ReconTensors:
 
     OUTPUTS: ClassVar = []
     OUTPUT_TEMPLATE: ClassVar = (
-        "{software}/sub-{subject}_ses-{session}_space-dwi_acq-shell{max_bvalue}_rec-{software}_desc-{metric}_dwiref.nii.gz"
+        "{software}/sub-{subject}_ses-{session}_space-dwi_acq-shell{max_bvalue}_rec-{software}_desc-{metric}_dwiref.nii.gz"  # noqa: E501
     )
 
     DIRECTORY_NAME: ClassVar = "tensors"
 
     def __init__(
-        self, mapper: FilesMapper, output_directory: Union[str, Path], max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50
+        self,
+        mapper: FilesMapper,
+        output_directory: Union[str, Path],
+        max_bvalue: Optional[int] = 1000,
+        bval_tol: Optional[int] = 50,
     ):
         """
         Initialize the ReconTensors class.
@@ -68,11 +70,18 @@ class ReconTensors:
         if all(flags):
             output_directory = output_directory / self.DIRECTORY_NAME
         else:
-            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+            output_directory = (
+                Path(output_directory)
+                / f"sub-{self.mapper.subject}"
+                / f"ses-{self.mapper.session}"
+                / self.DIRECTORY_NAME
+            )
         output_directory.mkdir(parents=True, exist_ok=True)
         return output_directory
 
-    def _filter_bvalues(self, max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50) -> int:
+    def _filter_bvalues(
+        self, max_bvalue: Optional[int] = 1000, bval_tol: Optional[int] = 50
+    ) -> int:
         """
         Filter the b-values based on the maximum b-value.
         """
@@ -96,15 +105,23 @@ class ReconTensors:
         """
         Crop the diffusion signal to the maximum b-value.
         """
-        out_template = str(self.output_directory / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_acq-shell{self.max_bvalue}_dwi")
+        out_template = str(
+            self.output_directory
+            / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_acq-shell{self.max_bvalue}_dwi"  # noqa: E501
+        )
         out_files = {}
-        for key, extension in zip(["dwi_file", "bval_file", "bvec_file"], [".nii.gz", ".bval", ".bvec"]):
+        for key, extension in zip(
+            ["dwi_file", "bval_file", "bvec_file"], [".nii.gz", ".bval", ".bvec"]
+        ):
             out_files[key] = Path(out_template + extension)
         if all([out_file.exists() for out_file in out_files.values()]):  # noqa
             return out_files
         dwiextract = DWIExtract()
         dwiextract.inputs.in_file = self.mapper.files.get("dwi_file")
-        dwiextract.inputs.grad_fsl = (self.mapper.files.get("bvec_file"), self.mapper.files.get("bval_file"))
+        dwiextract.inputs.grad_fsl = (
+            self.mapper.files.get("bvec_file"),
+            self.mapper.files.get("bval_file"),
+        )
         dwiextract.inputs.out_file = out_files.get("dwi_file")
         dwiextract.inputs.out_bvec = out_files.get("bvec_file")
         dwiextract.inputs.out_bval = out_files.get("bval_file")

@@ -11,7 +11,9 @@ GM_CMDS = [
 ]
 
 
-def generate_gm_mask_from_5tt(five_tissue_type: Union[str, Path], out_file: Union[str, Path], force: bool = False):
+def generate_gm_mask_from_5tt(
+    five_tissue_type: Union[str, Path], out_file: Union[str, Path], force: bool = False
+):
     """
     Generate a grey matter mask from a 5TT image.
 
@@ -36,7 +38,13 @@ def generate_gm_mask_from_5tt(five_tissue_type: Union[str, Path], out_file: Unio
         os.system(cmd)  # noqa: S605
 
 
-def qc_atlas_registration(atlas: Union[str, Path], reference: Union[str, Path], atlas_name: str, reference_name: str, force: bool = False):
+def qc_atlas_registration(
+    atlas: Union[str, Path],
+    reference: Union[str, Path],
+    atlas_name: str,
+    reference_name: str,
+    force: bool = False,
+):
     """
     Check if the registration of an atlas to a reference image was successful.
 

@@ -3,10 +3,7 @@ Parcellation module for NeuroFlow.
 """
 
 from pathlib import Path
-from typing import Callable
-from typing import ClassVar
-from typing import Optional
-from typing import Union
+from typing import Callable, ClassVar, Optional, Union
 
 import pandas as pd
 
@@ -22,7 +19,7 @@ class Parcellation:
     """
 
     OUTPUT_TEMPLATE: ClassVar = (
-        "{atlas}/sub-{subject}_ses-{session}_space-dwi_label-{label}_acq-shell{acq}_rec-{software}_atlas-{atlas}_desc-{metric}_parc.pkl"
+        "{atlas}/sub-{subject}_ses-{session}_space-dwi_label-{label}_acq-shell{acq}_rec-{software}_atlas-{atlas}_desc-{metric}_parc.pkl"  # noqa: E501
     )
     MEASURES: ClassVar = AVAILABLE_MEASURES
 
@@ -77,7 +74,12 @@ class Parcellation:
         if all(flags):
             output_directory = output_directory / self.DIRECTORY_NAME
         else:
-            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+            output_directory = (
+                Path(output_directory)
+                / f"sub-{self.mapper.subject}"
+                / f"ses-{self.mapper.session}"
+                / self.DIRECTORY_NAME
+            )
         output_directory.mkdir(parents=True, exist_ok=True)
         return output_directory
 
@@ -138,11 +140,16 @@ class Parcellation:
                     else:
                         # validate that all measures are present
                         data = pd.read_pickle(out_file)  # noqa
-                        if all([measure in data.columns for measure in self.measures]):  # noqa
+                        if all(
+                            [measure in data.columns for measure in self.measures]
+                        ):  # noqa
                             outputs[atlas_name][metric] = out_file
                             continue
                 out_file.parent.mkdir(parents=True, exist_ok=True)
-                df = pd.read_csv(atlas_entities["description_file"], index_col=atlas_entities["index_col"]).copy()
+                df = pd.read_csv(
+                    atlas_entities["description_file"],
+                    index_col=atlas_entities["index_col"],
+                ).copy()
                 for measure_name, measure in self.measures.items():
                     df[measure_name] = parcellate(
                         atlas_entities,

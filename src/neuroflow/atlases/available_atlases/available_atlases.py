@@ -2,6 +2,8 @@
 This file contains the available atlases that can be used in the pipeline.
 """
 
+# flake8: noqa: E501
+
 
 def generate_schaefer_dict() -> dict:
     """
