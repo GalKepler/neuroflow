@@ -1,4 +1,4 @@
-.. image:: assets/neuroflow.png
+.. image:: docs/assets/neuroflow.png
     :align: center
 
 ========
