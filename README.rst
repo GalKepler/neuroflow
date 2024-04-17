@@ -1,4 +1,4 @@
-.. image:: docs/assets/neuroflow.png
+.. image:: https://github.com/GalKepler/neuroflow/blob/main/assets/neuroflow.png?raw=true
     :align: center
 
 ========
