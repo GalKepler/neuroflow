@@ -7,4 +7,4 @@ coverage==7.4.4
 Sphinx==7.3.5
 twine==5.0.0
 ruff==0.3.7
-pytest==6.2.4
+pytest
