@@ -22,13 +22,12 @@ jobs:
         pip install pytest pytest-cov  # Install pytest and pytest-cov to generate coverage reports
         pip install .  # Install your package
 
-    - name: Run tests with coverage
+    - name: Run tests and collect coverage
       run: |
-        pytest --cov=./ --cov-report=xml  # Run pytest with coverage reporting, adjust your paths as needed
+        pytest --cov
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4.2.0
       with:
         token: ${{ secrets.CODECOV_TOKEN }}  # Ensure your CODECOV_TOKEN is set in GitHub Secrets
-        file: ./coverage.xml  # Adjust the path to where your coverage report is generated
         name: codecov-umbrella  # Optional: Name for the upload to distinguish it in the UI
