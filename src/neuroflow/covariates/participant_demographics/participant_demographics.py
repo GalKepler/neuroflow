@@ -16,6 +16,8 @@ from neuroflow.covariates.participant_demographics.utils import (
 )
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
+# pylint: disable=import-error
+
 
 class ParticipantDemographics(Covariate):
     """
