@@ -108,3 +108,8 @@ ENV/
 .vscode/
 .idea/
 
+# jupyter notebooks
+*.ipynb
+
+# tox derived
+neuroflow-0.1.0

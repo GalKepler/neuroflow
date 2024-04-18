@@ -1,8 +1,6 @@
 import pickle
 from pathlib import Path
-from typing import ClassVar
-from typing import Optional
-from typing import Union
+from typing import ClassVar, Optional, Union
 
 from neuroflow.covariates import Covariate
 from neuroflow.covariates.available_qc_measures import get_available_measures
@@ -61,7 +59,9 @@ class CovariatesCollector(Covariate):
             if source in available_measures:
                 results[source] = available_measures[source]
             else:
-                raise ValueError(f"Source {source} is not available in the QC measures.")
+                raise ValueError(
+                    f"Source {source} is not available in the QC measures."
+                )
         return results
 
     def _collect_inputs(self, inputs: list):

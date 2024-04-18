@@ -4,15 +4,12 @@ Registrations of atlases to subject's diffusion space.
 
 import copy
 from pathlib import Path
-from typing import ClassVar
-from typing import Optional
-from typing import Union
+from typing import ClassVar, Optional, Union
 
 from nipype.interfaces import fsl
 
 from neuroflow.atlases.available_atlases.available_atlases import AVAILABLE_ATLASES
-from neuroflow.atlases.utils import generate_gm_mask_from_5tt
-from neuroflow.atlases.utils import qc_atlas_registration
+from neuroflow.atlases.utils import generate_gm_mask_from_5tt, qc_atlas_registration
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
@@ -22,7 +19,9 @@ class Atlases:
     """
 
     ATLASES: ClassVar = AVAILABLE_ATLASES
-    OUTPUT_TEMPLATE: ClassVar = "sub-{subject}_ses-{session}_space-{space}_label-{label}_{atlas}"
+    OUTPUT_TEMPLATE: ClassVar = (
+        "sub-{subject}_ses-{session}_space-{space}_label-{label}_{atlas}"
+    )
 
     DIRECTORY_NAME: ClassVar = "atlases"
 
@@ -76,7 +75,12 @@ class Atlases:
         if all(flags):
             output_directory = output_directory / self.DIRECTORY_NAME
         else:
-            output_directory = Path(output_directory) / f"sub-{self.mapper.subject}" / f"ses-{self.mapper.session}" / self.DIRECTORY_NAME
+            output_directory = (
+                Path(output_directory)
+                / f"sub-{self.mapper.subject}"
+                / f"ses-{self.mapper.session}"
+                / self.DIRECTORY_NAME
+            )
         output_directory.mkdir(parents=True, exist_ok=True)
         return output_directory
 
@@ -97,7 +101,10 @@ class Atlases:
         """
         Generate a grey matter mask.
         """
-        gm_mask = self.output_directory / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"
+        gm_mask = (
+            self.output_directory
+            / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"  # noqa: E501
+        )
         if not gm_mask.exists():
             generate_gm_mask_from_5tt(self.mapper.files.get("t1w_5tt"), gm_mask)
         return gm_mask
@@ -125,10 +132,16 @@ class Atlases:
             aw = fsl.ApplyWarp(datatype="int", interp="nn", out_file=str(out_file))
             aw.inputs.in_file = nifti
             aw.inputs.ref_file = self.mapper.files.get("t1w_brain")
-            aw.inputs.mask_file = self.mapper.files.get("t1w_brain_mask") if not self.crop_to_gm else self.generate_gm_mask()
+            aw.inputs.mask_file = (
+                self.mapper.files.get("t1w_brain_mask")
+                if not self.crop_to_gm
+                else self.generate_gm_mask()
+            )
             aw.inputs.field_file = self.mapper.files.get("template_to_t1w_warp")
             aw.run()
-            qc_atlas_registration(out_file, self.mapper.files.get("t1w_brain"), atlas, "T1w", force=force)
+            qc_atlas_registration(
+                out_file, self.mapper.files.get("t1w_brain"), atlas, "T1w", force=force
+            )
         return t1w_atlases
 
     def register_atlas_to_dwi(self, force: bool = False):
@@ -152,7 +165,9 @@ class Atlases:
                 out_file.unlink(missing_ok=True)
             if out_file.exists():
                 continue
-            apply_xfm = fsl.ApplyXFM(datatype="int", interp="nearestneighbour", out_file=str(out_file))
+            apply_xfm = fsl.ApplyXFM(
+                datatype="int", interp="nearestneighbour", out_file=str(out_file)
+            )
             apply_xfm.inputs.in_file = in_file
             apply_xfm.inputs.reference = self.mapper.files.get("b0_brain")
             apply_xfm.inputs.in_matrix_file = self.mapper.files.get("t1w_to_dwi_mat")
@@ -161,7 +176,9 @@ class Atlases:
             # clean up the intermediate file
             Path(res.outputs.out_matrix_file).unlink()
 
-            qc_atlas_registration(out_file, self.mapper.files.get("b0_brain"), atlas, "DWI", force=force)
+            qc_atlas_registration(
+                out_file, self.mapper.files.get("b0_brain"), atlas, "DWI", force=force
+            )
         return dwi_atlases
 
     @property

@@ -4,8 +4,7 @@ Reconstruction of diffusion tensors from the diffusion signal using Dipy.
 
 import warnings
 from pathlib import Path
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 
 from dipy.workflows.reconst import ReconstDtiFlow
 
@@ -43,7 +42,12 @@ class DipyTensors(ReconTensors):
         max_bvalue : int
             Maximum b-value to use for the reconstruction.
         """
-        super().__init__(mapper=mapper, output_directory=output_directory, max_bvalue=max_bvalue, bval_tol=bval_tol)
+        super().__init__(
+            mapper=mapper,
+            output_directory=output_directory,
+            max_bvalue=max_bvalue,
+            bval_tol=bval_tol,
+        )
         self.fit_method = fit_method
         self.software = "dipy"
 
@@ -83,5 +87,7 @@ class DipyTensors(ReconTensors):
             for file in outputs.values():
                 file.unlink(missing_ok=True)
         flow = ReconstDtiFlow()
-        flow.run(**inputs, **{f"out_{key}": str(value) for key, value in outputs.items()})
+        flow.run(
+            **inputs, **{f"out_{key}": str(value) for key, value in outputs.items()}
+        )
         return outputs

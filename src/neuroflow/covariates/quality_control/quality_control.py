@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
-from typing import ClassVar
-from typing import Union
+from typing import ClassVar, Union
 
 from nipype.interfaces import fsl
 
