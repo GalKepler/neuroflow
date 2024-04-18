@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests, CI & coverage
-      - |github-actions| |codecov| |codacy| |travis|
+      - |github-actions| |codecov| |codacy|
     * - version
       - |pypi| |python|
     * - styling
@@ -21,10 +21,6 @@ Overview
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
     :alt: Code Quality
-
-.. |travis| image:: https://app.travis-ci.com/GalKepler/neuroflow.svg?token=SamEGAdtksLQVUkRZRrm&branch=main
-    :alt: Travis CI Build Status
-    :target: https://app.travis-ci.com/GalKepler/neuroflow
 
 .. |docs| image:: https://readthedocs.org/projects/neuroflow/badge/?style=flat
     :target: https://readthedocs.org/projects/neuroflow/
