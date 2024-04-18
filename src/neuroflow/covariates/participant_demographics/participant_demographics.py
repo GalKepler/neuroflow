@@ -16,8 +16,6 @@ from neuroflow.covariates.participant_demographics.utils import (
 )
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
-# pylint: disable=import-error
-
 
 class ParticipantDemographics(Covariate):
     """
@@ -35,8 +33,8 @@ class ParticipantDemographics(Covariate):
     """
 
     SUBJECT_ID_COLUMN: ClassVar = "Questionnaire"
-    CRF_COLUMNS_TO_KEEP: ClassVar = CRF_COLUMNS_TO_KEEP.copy()
-    CRF_TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS.copy()
+    CRF_COLUMNS: ClassVar = CRF_COLUMNS_TO_KEEP.copy()
+    TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS.copy()
 
     COVARIATE_SOURCE: ClassVar = "demographics"
     DIRECTORY_NAME: ClassVar = "demographics"
@@ -107,10 +105,10 @@ class ParticipantDemographics(Covariate):
         Get the data of the subject from the CRF data
         """
         subject_row = self.locate_subject_row()
-        subject_row = subject_row[list(self.CRF_COLUMNS_TO_KEEP.keys())].rename(
-            columns=self.CRF_COLUMNS_TO_KEEP
+        subject_row = subject_row[list(self.CRF_COLUMNS.keys())].rename(
+            columns=self.CRF_COLUMNS
         )
-        for column, transformation in self.CRF_TRANSFORMATIONS.items():
+        for column, transformation in self.TRANSFORMATIONS.items():
             subject_row[column] = subject_row[column].apply(transformation)
         subject_row["age_at_scan"] = self._calculate_age_from_dob(subject_row)
         subject_row = subject_row.reset_index().rename({"index": "crf_index"})
