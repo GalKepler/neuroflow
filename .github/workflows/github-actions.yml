@@ -66,3 +66,10 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: GalKepler/neuroflow
+  safety:
+    name: Check for security vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pyupio/safety-action@v1
+        with:
+          api-key: ${{ secrets.SAFETY_API_KEY }}
