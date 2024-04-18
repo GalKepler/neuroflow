@@ -59,3 +59,8 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/82d2825d47274eb8b239fc43cf0e65e0
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/GalKepler/neuroflow?utm_source=github.com&utm_medium=referral&utm_content=GalKepler/neuroflow&utm_campaign=Badge_Grade
