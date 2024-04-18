@@ -33,8 +33,8 @@ class ParticipantDemographics(Covariate):
     """
 
     SUBJECT_ID_COLUMN: ClassVar = "Questionnaire"
-    CRF_COLUMNS_TO_KEEP: ClassVar = CRF_COLUMNS_TO_KEEP
-    CRF_TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS
+    CRF_COLUMNS_TO_KEEP: ClassVar = CRF_COLUMNS_TO_KEEP.copy()
+    CRF_TRANSFORMATIONS: ClassVar = CRF_TRANSFORMATIONS.copy()
 
     COVARIATE_SOURCE: ClassVar = "demographics"
     DIRECTORY_NAME: ClassVar = "demographics"
