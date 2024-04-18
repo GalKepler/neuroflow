@@ -15,6 +15,8 @@ Overview
       - |pypi| |python|
     * - styling
       - |black| |isort| |flake8| |pre-commit|
+    * - license
+      - |license|
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -36,6 +38,10 @@ Overview
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
 
+.. |license| image:: https://img.shields.io/github/license/GalKepler/neuroflow.svg
+        :target: https://opensource.org/license/mit
+        :alt: License
+
 .. |pypi| image:: https://img.shields.io/pypi/v/neuroflow.svg
         :target: https://pypi.python.org/pypi/neuroflow
 
@@ -53,6 +59,7 @@ Overview
 
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
         :target: https://github.com/pre-commit/pre-commit
+
 
 NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced analysis and visualization for neuroimaging research.
 
