@@ -41,7 +41,7 @@ Overview
 .. |pypi| image:: https://img.shields.io/pypi/v/neuroflow.svg
         :target: https://pypi.python.org/pypi/neuroflow
 
-.. |python| image:: https://img.shields.io/badge/Python-|%203.9%20|%203.10%20|%203.11-3776AB.svg?style=flat&logo=python&logoColor=white
+.. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
         :target: https://www.python.org
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
