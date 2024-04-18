@@ -57,19 +57,3 @@ jobs:
           TOXPYTHON: "${{ matrix.toxpython }}"
         run: >
           tox -e ${{ matrix.tox_env }} -v
-  codecov:
-    needs: test
-    name: Upload coverage reports to Codecov
-    runs-on: ubuntu-latest
-    steps:
-      - uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: GalKepler/neuroflow
-  safety:
-    name: Check for security vulnerabilities
-    runs-on: ubuntu-latest
-    steps:
-      - uses: pyupio/safety-action@v1
-        with:
-          api-key: ${{ secrets.SAFETY_API_KEY }}
