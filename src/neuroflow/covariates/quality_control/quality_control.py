@@ -99,7 +99,7 @@ class QualityControl(Covariate):
         changed_files = self._pre_eddy_qc()
         try:
             eddy_qc = fsl.EddyQuad(**inputs)
-            eddy_qc.inputs.output_dir = output_directory
+            eddy_qc.inputs.output_dir = str(output_directory)
             res = eddy_qc.run()
         except Exception as e:
             self._post_eddy_qc(changed_files)
