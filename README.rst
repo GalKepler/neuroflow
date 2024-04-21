@@ -12,7 +12,7 @@ Overview
     * - tests & coverage
       - |github-actions| |codecov| |codacy|
     * - styling
-      - |black| |isort| |flake8| |precommit|
+      - |black| |isort| |flake8|
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
