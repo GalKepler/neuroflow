@@ -73,6 +73,18 @@ Features
 * Automatic extraction of available covariates originating from different sources (demographics, temporal, environmental).
 * Quality control of the preprocessing of the diffusion MRI data.
 
+
+Usage
+-----
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: bash
+
+    $ neuroflow process <input_dir> <output_dir> <google_credentials>
+
+
 Credits
 -------
 

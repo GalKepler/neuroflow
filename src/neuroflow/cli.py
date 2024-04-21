@@ -25,10 +25,10 @@ def cli():
 # Define a subcommand
 @cli.command()  # This decorator creates a new command within the CLI group
 @click.argument(
-    "preprocessed_directory", type=click.Path(exists=True)
+    "input_dir", type=click.Path(exists=True)
 )  # Require an directory with preprocessing results
 @click.argument(
-    "output_directory",
+    "output_dir",
     type=click.Path(),
     # help="Output directory for NeuroFlow's results",
 )
@@ -54,8 +54,8 @@ def cli():
     help="Maximum b-value for diffusion data",
 )
 def process(
-    preprocessed_directory: str,
-    output_directory: str,
+    input_dir: str,
+    output_dir: str,
     patterns_file: str,
     google_credentials: str,
     atlases: str,
@@ -66,7 +66,7 @@ def process(
 
     Parameters
     ----------
-    preprocessed_directory : str
+    input_dir : str
         The path to the preprocessed data
     output_directory : str
         The path to the output directory
@@ -81,8 +81,8 @@ def process(
     """
     print(atlases)
     atlases = atlases.split(",") if atlases else None
-    preprocessed_directory = Path(preprocessed_directory)
-    output_directory = Path(output_directory)
+    preprocessed_directory = Path(input_dir)
+    output_directory = Path(output_dir)
     google_credentials = Path(google_credentials)
     patterns_file = Path(patterns_file) if patterns_file else None
     print("Processing the data...")
