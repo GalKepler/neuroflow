@@ -41,7 +41,7 @@ Overview
 .. |pypi| image:: https://img.shields.io/pypi/v/neuroflow-yalab.svg
         :target: https://pypi.python.org/pypi/neuroflow-yalab
 
-.. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
+.. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow-yalab
         :target: https://www.python.org
 
 .. |black| image:: https://img.shields.io/badge/formatter-black-000000.svg
