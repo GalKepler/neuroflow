@@ -91,7 +91,6 @@ class QualityControl(Covariate):
         Run the eddy quality control
         """
         output_directory = self.output_directory / "eddy_qc"
-        output_directory.mkdir(parents=True, exist_ok=True)
         flag = Path(output_directory / self.EDDY_QC_FLAG)
         if flag.exists():
             return flag
