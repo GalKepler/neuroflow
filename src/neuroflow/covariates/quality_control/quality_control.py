@@ -103,6 +103,7 @@ class QualityControl(Covariate):
         except Exception as e:
             self._post_eddy_qc(changed_files)
             raise e
+        self._post_eddy_qc(changed_files)
         return Path(res.outputs.qc_json)
 
     def get_quality_control(self):
