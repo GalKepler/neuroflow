@@ -38,8 +38,8 @@ Overview
         :target: https://opensource.org/license/mit
         :alt: License
 
-.. |pypi| image:: https://img.shields.io/pypi/v/neuroflow.svg
-        :target: https://pypi.python.org/pypi/neuroflow
+.. |pypi| image:: https://img.shields.io/pypi/v/neuroflow-yalab.svg
+        :target: https://pypi.python.org/pypi/neuroflow-yalab
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
         :target: https://www.python.org

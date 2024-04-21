@@ -113,3 +113,6 @@ ENV/
 
 # tox derived
 neuroflow-0.1.0
+
+# ruff cache
+.ruff_cache/
