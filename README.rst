@@ -11,8 +11,8 @@ Overview
       - |docs|
     * - tests & coverage
       - |github-actions| |codecov| |codacy|
-    * - styling
-      - |isort| |flake8| |pre-commit|
+    * - pypi & updates
+      - |pypi| |pyup|
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -29,6 +29,13 @@ Overview
 .. |codecov| image:: https://codecov.io/github/GalKepler/neuroflow/graph/badge.svg?token=LO5CH471O4
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
+
+.. |pypi| image:: https://img.shields.io/pypi/v/neuroflow.svg
+        :target: https://pypi.python.org/pypi/neuroflow
+
+.. |pyup| image:: https://pyup.io/repos/github/GalKepler/neuroflow/shield.svg
+     :target: https://pyup.io/repos/github/GalKepler/neuroflow/
+     :alt: Updates
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :alt: Black
