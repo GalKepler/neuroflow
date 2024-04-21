@@ -12,7 +12,7 @@ Overview
     * - tests & coverage
       - |github-actions| |codecov| |codacy|
     * - styling
-      - |black| |isort| |flake8| |pre-commit|
+      - |black| |isort| |flake8| |precommit|
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -42,7 +42,7 @@ Overview
     :alt: Flake8
     :target: https://flake8.pycqa.org/en/latest/
 
-.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+.. |precommit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
     :alt: pre-commit
     :target: https://github.com/pre-commit/pre-commit
 
