@@ -12,7 +12,7 @@ Overview
     * - tests & coverage
       - |github-actions| |codecov| |codacy|
     * - pypi & updates
-      - |pypi| |pyup|
+      - |black| |isort| |flake8| |pre-commit|
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/6acd65a8fd4741509422510d7a023386
     :target: https://app.codacy.com/gh/GalKepler/neuroflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -30,18 +30,14 @@ Overview
     :alt: Coverage Status
     :target: https://app.codecov.io/github/GalKepler/neuroflow
 
-.. |pypi| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. |black| image:: https://img.shields.io/badge/formatter-black-000000
         :target: https://github.com/psf/black
 
-.. |pyup| image:: https://pyup.io/repos/github/GalKepler/neuroflow/shield.svg
-     :target: https://pyup.io/repos/github/GalKepler/neuroflow/
-     :alt: Updates
-
-.. |isort| image:: https://img.shields.io/badge/%20imports-isort-%231674b1.svg
+.. |isort| image:: https://img.shields.io/badge/imports-isort-%231674b1
     :alt: isort
     :target: https://pycqa.github.io/isort/
 
-.. |flake8| image:: https://img.shields.io/badge/code%20style-flake8-000000.svg
+.. |flake8| image:: https://img.shields.io/badge/style-flake8-000000
     :alt: Flake8
     :target: https://flake8.pycqa.org/en/latest/
 
