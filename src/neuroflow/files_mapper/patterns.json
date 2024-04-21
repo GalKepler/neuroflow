@@ -10,5 +10,7 @@
     "t1w_brain_mask": "raw_data/mpragebrain_mask.nii.gz",
     "t1w_5tt": "raw_data/segmentation_t1.mif",
     "index_file": "raw_data/index.txt",
-    "param_file": "raw_data/datain.txt"
+    "param_file": "raw_data/datain.txt",
+    "tracts": "tracts/{subject}_{session}.tck",
+    "tracts_unsifted": "tracts_unsifted/{subject}_{session}.tck"
 }
