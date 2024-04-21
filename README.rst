@@ -38,8 +38,8 @@ Overview
         :target: https://opensource.org/license/mit
         :alt: License
 
-.. |pypi| image:: https://img.shields.io/pypi/v/neuroflow.svg
-        :target: https://pypi.python.org/pypi/neuroflow
+.. |pypi| image:: https://img.shields.io/pypi/v/neuroflow-yalab.svg
+        :target: https://pypi.python.org/pypi/neuroflow-yalab
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
         :target: https://www.python.org
@@ -72,6 +72,18 @@ Features
 * Estimation of numerous distribution metrices (e.g. mean, median, IQR-mean, etc.) of diffusion metrics within each parcellation unit.
 * Automatic extraction of available covariates originating from different sources (demographics, temporal, environmental).
 * Quality control of the preprocessing of the diffusion MRI data.
+
+
+Usage
+-----
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: bash
+
+    $ neuroflow process <input_dir> <output_dir> <google_credentials>
+
 
 Credits
 -------
