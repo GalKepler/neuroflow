@@ -44,13 +44,13 @@ Overview
 .. |python| image:: https://img.shields.io/pypi/pyversions/neuroflow.svg
         :target: https://www.python.org
 
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. |black| image:: https://img.shields.io/badge/formatter-black-000000.svg
         :target: https://github.com/psf/black
 
-.. |isort| image:: https://img.shields.io/badge/%20imports-isort-%231674b1.svg
+.. |isort| image:: https://img.shields.io/badge/imports-isort-%231674b1.svg
         :target: https://pycqa.github.io/isort/
 
-.. |flake8| image:: https://img.shields.io/badge/code%20style-flake8-000000.svg
+.. |flake8| image:: https://img.shields.io/badge/style-flake8-000000.svg
         :target: https://flake8.pycqa.org/en/latest/
 
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
