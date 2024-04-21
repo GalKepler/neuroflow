@@ -42,10 +42,6 @@ Overview
     :alt: Flake8
     :target: https://flake8.pycqa.org/en/latest/
 
-.. |precommit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
-    :alt: pre-commit
-    :target: https://github.com/pre-commit/pre-commit
-
 
 NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced analysis and visualization for neuroimaging research.
 
