@@ -76,6 +76,7 @@ class ParticipantDemographics(Covariate):
         """
         fixed_crf_subjects = (
             self.crf[self.SUBJECT_ID_COLUMN]
+            .astype(str)
             .str.lower()
             .str.zfill(4)
             .str.replace("_", "")
