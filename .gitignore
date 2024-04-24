@@ -116,3 +116,6 @@ neuroflow-0.1.0
 
 # ruff cache
 .ruff_cache/
+
+# neuroflow credentials
+neuroflow*.json

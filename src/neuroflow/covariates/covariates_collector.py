@@ -19,6 +19,7 @@ class CovariatesCollector(Covariate):
         self,
         mapper: FilesMapper,
         google_credentials_path: Union[str, Path],
+        location: str = "Tel Aviv University",
         output_directory: Optional[str] = None,
         sources: Optional[Union[str, list]] = None,
     ):
@@ -38,6 +39,7 @@ class CovariatesCollector(Covariate):
         """
         super().__init__(mapper, output_directory)
         self.google_credentials_path = Path(google_credentials_path)
+        self.location = location
         self.qc_measures = self._get_covariates(sources)
 
     def _get_covariates(self, sources: Optional[Union[str, list]] = None):
