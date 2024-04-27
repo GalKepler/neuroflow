@@ -14,6 +14,8 @@ from typing import Tuple, Union
 
 from neuroflow.files_mapper.utils import load_json_file
 
+PARENT = Path(__file__).resolve().parent
+
 
 class FilesMapper:
     """
@@ -23,7 +25,7 @@ class FilesMapper:
     def __init__(
         self,
         path: str,
-        patterns: Union[str, Path] = "src/neuroflow/files_mapper/patterns.json",
+        patterns: Union[str, Path] = PARENT / "patterns.json",
     ):
         """
         Initialize the FilesMapper object.
