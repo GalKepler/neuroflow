@@ -145,7 +145,9 @@ class ConnectomeReconstructor:
             inputs.append({**self.base_inputs, **combination})
         return inputs
 
-    def _reconstruct_connectome(self, inputs: dict) -> dict:
+    def _reconstruct_connectome(
+        self, inputs: dict, force: Optional[bool] = False
+    ) -> dict:
         """
         Reconstruct the connectome.
 
@@ -153,17 +155,20 @@ class ConnectomeReconstructor:
         ----------
         inputs : dict
             Inputs for the connectome reconstruction.
+        force : Optional[bool], optional
+            Force the generation of the connectome, by default False
 
         Returns
         -------
         dict
             Outputs for the connectome reconstruction.
+
         """
         updated_inputs = inputs.copy()
         # remove the scale key if it is not set
         if updated_inputs.get("scale") is None:
             updated_inputs.pop("scale")
-        connectome = BuildConnectome(**updated_inputs)
+        connectome = BuildConnectome(**updated_inputs, force=force)
         return connectome.run()
 
     def run(self, force: bool = False) -> dict:
@@ -188,9 +193,9 @@ class ConnectomeReconstructor:
             for input_data in inputs:
                 flag = input_data.get(self.OUTPUT_FLAG)
                 if not flag.exists() or force:
-                    flag.unlink(missing_ok=True)
+                    # flag.unlink(missing_ok=True)
                     flag.parent.mkdir(parents=True, exist_ok=True)
-                    _ = self._reconstruct_connectome(input_data)
+                    _ = self._reconstruct_connectome(input_data, force=force)
                 outputs = pd.concat(
                     [
                         outputs,

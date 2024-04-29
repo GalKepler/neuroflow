@@ -77,6 +77,10 @@ class BuildConnectomeInputSpec(MRTrix3BaseInputSpec):
         argstr="-stat_edge %s",
         desc="select the statistic to compute for each edge.",
     )
+    force = traits.Bool(
+        argstr="-force",
+        desc="force the output file to be written.",
+    )
 
 
 class BuildConnectomeOutputSpec(TraitedSpec):
