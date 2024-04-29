@@ -128,6 +128,7 @@ def process(
         mapper=mapper,
         google_credentials_path=google_credentials,
         output_directory=output_directory,
+        force=force,
     )
     connectome_recon = ConnectomeReconstructor(
         mapper=mapper, atlases_manager=atlases, output_directory=output_directory

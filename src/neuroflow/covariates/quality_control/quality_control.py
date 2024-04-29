@@ -1,11 +1,13 @@
 import json
+import shutil
+import warnings
 from pathlib import Path
-from typing import ClassVar, Union
+from typing import ClassVar, Optional, Union
 
 from nipype.interfaces import fsl
 
 from neuroflow.covariates import Covariate
-from neuroflow.covariates.quality_control.utils import QC_JSON
+from neuroflow.covariates.quality_control.utils import BASE_JSON_KEYS, QC_JSON
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
 
@@ -86,11 +88,18 @@ class QualityControl(Covariate):
         inputs["base_name"] = str(inputs["bval_file"].parent / "data")
         return inputs
 
-    def _run_eddy_qc(self):
+    def _run_eddy_qc(self, force: Optional[bool] = False):
         """
         Run the eddy quality control
+
+        Parameters
+        ----------
+        force : Optional[bool], optional
+            Force the processing of the data, by default False
         """
         output_directory = self.output_directory / "eddy_qc"
+        if force and output_directory.exists():
+            shutil.rmtree(str(output_directory))
         flag = Path(output_directory / self.EDDY_QC_FLAG)
         if flag.exists():
             return flag
@@ -102,11 +111,12 @@ class QualityControl(Covariate):
             res = eddy_qc.run()
         except Exception as e:
             self._post_eddy_qc(changed_files)
-            raise e
+            warnings.warn(f"Failed to run eddy quality control: {e}")
+            return None
         self._post_eddy_qc(changed_files)
         return Path(res.outputs.qc_json)
 
-    def get_quality_control(self):
+    def get_quality_control(self, force: Optional[bool] = False):
         """
         Parse the quality control json
 
@@ -114,8 +124,12 @@ class QualityControl(Covariate):
         ----------
         qc_json : Path
             The path to the quality control json
+        force : Optional[bool], optional
+            Force the processing of the data, by default False
         """
-        qc_json = self._run_eddy_qc()
+        qc_json = self._run_eddy_qc(force=force)
+        if qc_json is None:
+            return {key: None for key in BASE_JSON_KEYS}
         with qc_json.open("r") as f:
             qc_dict = json.load(f)
         result = {}
@@ -127,7 +141,7 @@ class QualityControl(Covariate):
                 result[key] = value
         return result
 
-    def get_covariates(self) -> dict:
+    def get_covariates(self, force: Optional[bool] = False) -> dict:
         """
         Get the quality control covariates
 
@@ -135,5 +149,7 @@ class QualityControl(Covariate):
         -------
         dict
             The quality control covariates
+        force : Optional[bool], optional
+            Force the processing of the data, by default False
         """
-        return {"quality_control": self.get_quality_control()}
+        return {"quality_control": self.get_quality_control(force=force)}

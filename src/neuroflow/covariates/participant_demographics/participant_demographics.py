@@ -101,10 +101,16 @@ class ParticipantDemographics(Covariate):
         dob = subject_row["dob"].iloc[0]
         return (self.session_timestamp - dob).days // 365
 
-    def get_covariates(self):
+    def get_covariates(self, force: Optional[bool] = False):
         """
         Get the data of the subject from the CRF data
+
+        Parameters
+        ----------
+        force : Optional[bool], optional
+            Force the processing of the data, by default False
         """
+        _ = force
         subject_row = self.locate_subject_row()
         subject_row = subject_row[list(self.CRF_COLUMNS.keys())].rename(
             columns=self.CRF_COLUMNS

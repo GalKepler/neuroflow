@@ -22,6 +22,7 @@ class CovariatesCollector(Covariate):
         location: str = "Tel Aviv University",
         output_directory: Optional[str] = None,
         sources: Optional[Union[str, list]] = None,
+        force: bool = False,
     ):
         """
         Constructor for the QCManager class.
@@ -36,11 +37,14 @@ class CovariatesCollector(Covariate):
             Path to the output directory, by default None
         sources : Optional[Union[str, list]], optional
             The sources of the QC measures, by default None
+        force : bool, optional
+            Force the processing of the data, by default False
         """
         super().__init__(mapper, output_directory)
         self.google_credentials_path = Path(google_credentials_path)
         self.location = location
         self.qc_measures = self._get_covariates(sources)
+        self.force = force
 
     def _get_covariates(self, sources: Optional[Union[str, list]] = None):
         """
@@ -82,12 +86,17 @@ class CovariatesCollector(Covariate):
             runner = qc_measures["runner"]
             inputs = self._collect_inputs(qc_measures["inputs"])
             runner = runner(**inputs)
-            results.update(runner.get_covariates())
+            results.update(runner.get_covariates(force=self.force))
         return results
 
     def save_to_file(self):
         """
         Save the covariates to a pickle file.
+
+        Parameters
+        ----------
+        force : bool, optional
+            Force the saving of the covariates, by default False
         """
         with Path.open(self.output_directory / "covariates.pkl", "wb") as file:
             pickle.dump(self.covariates, file)

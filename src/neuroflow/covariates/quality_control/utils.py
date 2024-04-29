@@ -50,3 +50,21 @@ QC_JSON = {
     "pct_outliers_total": {"func": get, "keys": {"key": "qc_outliers_tot"}},
     "qc_params_avg": {"func": parse_params_avg, "keys": {"key": "qc_params_avg"}},
 }
+
+BASE_JSON_KEYS = [
+    "avg_abs_mot",
+    "avg_rel_mot",
+    "pct_outliers_b1000",
+    "pct_outliers_b2000",
+    "pct_outliers_b4000",
+    "pct_outliers_total",
+    "avg_translation_x",
+    "avg_translation_y",
+    "avg_translation_z",
+    "avg_rotation_x",
+    "avg_rotation_y",
+    "avg_rotation_z",
+    "std_ec_term_x",
+    "std_ec_term_y",
+    "std_ec_term_z",
+]

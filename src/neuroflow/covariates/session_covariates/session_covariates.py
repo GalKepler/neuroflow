@@ -77,13 +77,18 @@ class SessionCovariates(Covariate):
         """
         Parse the timestamp of the session
         """
+        session_is_timestamp = self.session_timestamp is not None
         return {
-            "timestamp": self.session_timestamp,
-            "year": self.session_timestamp.year,
-            "month": self.session_timestamp.month,
-            "day_of_month": self.session_timestamp.day,
-            "day_of_week": self.session_timestamp.weekday(),
-            "hour": self.session_timestamp.hour,
+            "timestamp": self.session_timestamp if session_is_timestamp else None,
+            "year": self.session_timestamp.year if session_is_timestamp else None,
+            "month": self.session_timestamp.month if session_is_timestamp else None,
+            "day_of_month": (
+                self.session_timestamp.day if session_is_timestamp else None
+            ),
+            "day_of_week": (
+                self.session_timestamp.weekday() if session_is_timestamp else None
+            ),
+            "hour": self.session_timestamp.hour if session_is_timestamp else None,
         }
 
     def _get_weather_data(self):
@@ -106,7 +111,7 @@ class SessionCovariates(Covariate):
         weather = weather[cols]
         return weather.iloc[0].to_dict()
 
-    def get_covariates(self):
+    def get_covariates(self, force: Optional[bool] = False):
         """
         Get the session covariates
 
@@ -114,7 +119,10 @@ class SessionCovariates(Covariate):
         -------
         dict
             The session covariates
+        force : Optional[bool], optional
+            Force the processing of the data, by default False
         """
+        _ = force
         return {
             self.INCLUDED_SOURCES.get("temporal"): self._parse_timestamp(),
             self.INCLUDED_SOURCES.get("environmental"): self._get_weather_data(),
