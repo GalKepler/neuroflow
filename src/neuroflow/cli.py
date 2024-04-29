@@ -137,9 +137,9 @@ def process(
     print("Running atlas registrations and parcellations of MRtrix3-derived metrics...")
     _ = parcellation_mrtrix3.run(force=force)
     print("Saving participant and session's covariates...")
-    covariates.save_to_file(force=force)
+    covariates.save_to_file()
     print("Reconstructing the connectome...")
-    _ = connectome_recon.run()
+    _ = connectome_recon.run(force=force)
 
 
 if __name__ == "__main__":
