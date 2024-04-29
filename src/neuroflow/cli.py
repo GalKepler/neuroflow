@@ -53,6 +53,12 @@ def cli():
     default=1000,
     help="Maximum b-value for diffusion data",
 )
+@click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    help="Force the processing of the data",
+)
 def process(
     input_dir: str,
     output_dir: str,
@@ -60,6 +66,7 @@ def process(
     google_credentials: str,
     atlases: str,
     max_bval: int,
+    force: bool,
 ):
     """
     Process the preprocessed data for the participant.
@@ -78,6 +85,8 @@ def process(
         The atlases to use for the analysis
     max_bval : int
         The maximum b-value for diffusion data
+    force : bool
+        Force the processing of the data
     """
     print(atlases)
     atlases = atlases.split(",") if atlases else None
@@ -124,11 +133,11 @@ def process(
         mapper=mapper, atlases_manager=atlases, output_directory=output_directory
     )
     print("Running atlas registrations and parcellations of Dipy-derived metrics...")
-    _ = parcellation_dipy.run()
+    _ = parcellation_dipy.run(force=force)
     print("Running atlas registrations and parcellations of MRtrix3-derived metrics...")
-    _ = parcellation_mrtrix3.run()
+    _ = parcellation_mrtrix3.run(force=force)
     print("Saving participant and session's covariates...")
-    covariates.save_to_file()
+    covariates.save_to_file(force=force)
     print("Reconstructing the connectome...")
     _ = connectome_recon.run()
 
