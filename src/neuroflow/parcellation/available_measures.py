@@ -71,7 +71,7 @@ def qfmean(data: np.ndarray, lower_quantile=10, upper_quantile=90) -> float:
     return np.nanmean(data[(data > lower) & (data < upper)])
 
 
-def iqrmean(data: np.ndarray, threshold=1.5) -> float:
+def iqrmean(data: np.ndarray) -> float:
     """
     IQR Filtered Mean
 
@@ -89,10 +89,7 @@ def iqrmean(data: np.ndarray, threshold=1.5) -> float:
     """
     q75 = np.nanpercentile(data, 75)
     q25 = np.nanpercentile(data, 25)
-    iqr = q75 - q25
-    lower = q25 - threshold * iqr
-    upper = q75 + threshold * iqr
-    return np.nanmean(data[(data > lower) & (data < upper)])
+    return np.nanmean(data[(data >= q25) & (data <= q75)])
 
 
 AVAILABLE_MEASURES = {
