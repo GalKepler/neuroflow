@@ -128,9 +128,14 @@ class QualityControl(Covariate):
         force : Optional[bool], optional
             Force the processing of the data, by default False
         """
+        striping_score = striping_effect.calculate_strip_score(
+            self.mapper.files.get("b0_brain")
+        )
         qc_json = self._run_eddy_qc(force=force)
         if qc_json is None:
-            return {key: None for key in BASE_JSON_KEYS}
+            result = {key: None for key in BASE_JSON_KEYS}
+            result["striping_score"] = striping_score
+            return result
         with qc_json.open("r") as f:
             qc_dict = json.load(f)
         result = {}
@@ -140,9 +145,6 @@ class QualityControl(Covariate):
                 result.update(value)
             else:
                 result[key] = value
-        striping_score = striping_effect.calculate_strip_score(
-            self.mapper.files.get("b0_brain")
-        )
         result["striping_score"] = striping_score
         return result
 
