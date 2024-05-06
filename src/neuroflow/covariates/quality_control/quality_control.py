@@ -109,10 +109,11 @@ class QualityControl(Covariate):
         try:
             eddy_qc = fsl.EddyQuad(**inputs)
             eddy_qc.inputs.output_dir = str(output_directory)
+            print(eddy_qc.cmdline)
             res = eddy_qc.run()
         except Exception as e:
-            self._post_eddy_qc(changed_files)
             warnings.warn(f"Failed to run eddy quality control: {e}")
+            self._post_eddy_qc(changed_files)
             return None
         self._post_eddy_qc(changed_files)
         return Path(res.outputs.qc_json)
