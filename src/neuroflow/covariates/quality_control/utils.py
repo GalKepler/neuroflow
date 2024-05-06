@@ -1,3 +1,27 @@
+import numpy as np
+
+
+def calculate_snr(data: np.ndarray, mask: np.ndarray) -> float:
+    """
+    Calculate the signal-to-noise ratio of the data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The data
+    mask : np.ndarray
+        The mask
+
+    Returns
+    -------
+    float
+        The signal-to-noise ratio
+    """
+    signal = data[mask]
+    noise = np.std(data[~mask])
+    return np.nanmean(signal) / noise
+
+
 def parse_pct_b_outliers(
     qc_dict: dict,
     key: str = "qc_outliers_b",
