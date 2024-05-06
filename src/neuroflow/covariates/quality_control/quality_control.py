@@ -7,6 +7,7 @@ from typing import ClassVar, Optional, Union
 from nipype.interfaces import fsl
 
 from neuroflow.covariates import Covariate
+from neuroflow.covariates.quality_control import striping_effect
 from neuroflow.covariates.quality_control.utils import BASE_JSON_KEYS, QC_JSON
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
@@ -139,6 +140,10 @@ class QualityControl(Covariate):
                 result.update(value)
             else:
                 result[key] = value
+        striping_score = striping_effect.calculate_strip_score(
+            self.mapper.files.get("b0_brain")
+        )
+        result["striping_score"] = striping_score
         return result
 
     def get_covariates(self, force: Optional[bool] = False) -> dict:
