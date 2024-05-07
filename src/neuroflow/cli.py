@@ -14,6 +14,16 @@ from neuroflow.parcellation.parcellation import Parcellation
 from neuroflow.recon_tensors.dipy.dipy_tensors import DipyTensors
 from neuroflow.recon_tensors.mrtrix3.mrtrix3_tensors import MRTrix3Tensors
 
+AVAILABLE_STEPS = [
+    "dipy_tensors",
+    "mrtrix3_tensors",
+    "atlases",
+    "parcellation_dipy",
+    "parcellation_mrtrix3",
+    "covariates",
+    "connectome_recon",
+]
+
 
 # Example CLI script with a basic command structure
 @click.group()  # This decorator defines a group of commands, allowing subcommands
@@ -48,10 +58,26 @@ def cli():
     help="The atlases to use for the analysis",
 )
 @click.option(
+    "--crop_to_gm",
+    is_flag=True,
+    default=False,
+    help="Crop the atlases to the gray matter",
+)
+@click.option(
     "--max_bval",
     type=int,
     default=1000,
     help="Maximum b-value for diffusion data",
+)
+@click.option(
+    "--ignore_steps",
+    type=str,
+    help="Ignore specific steps",
+)
+@click.option(
+    "--steps",
+    type=str,
+    help="Run specific steps",
 )
 @click.option(
     "--force",
@@ -65,7 +91,10 @@ def process(
     patterns_file: str,
     google_credentials: str,
     atlases: str,
+    crop_to_gm: bool,
     max_bval: int,
+    ignore_steps: str,
+    steps: str,
     force: bool,
 ):
     """
@@ -88,8 +117,10 @@ def process(
     force : bool
         Force the processing of the data
     """
-    print(atlases)
     atlases = atlases.split(",") if atlases else None
+    steps = steps.split(",") if steps else AVAILABLE_STEPS
+    ignore_steps = ignore_steps.split(",") if ignore_steps else None
+    steps = [step for step in steps if step not in ignore_steps]
     preprocessed_directory = Path(input_dir)
     output_directory = Path(output_dir)
     google_credentials = Path(google_credentials)
@@ -107,40 +138,54 @@ def process(
         if patterns_file is None
         else FilesMapper(path=preprocessed_directory, patterns=patterns_file)
     )
-    dipy_tensors = DipyTensors(
-        mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
-    )
-    mrtrix3_tensors = MRTrix3Tensors(
-        mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
-    )
-    atlases = Atlases(mapper=mapper, output_directory=output_directory, atlases=atlases)
-    parcellation_dipy = Parcellation(
-        tensors_manager=dipy_tensors,
-        atlases_manager=atlases,
-        output_directory=output_directory,
-    )
-    parcellation_mrtrix3 = Parcellation(
-        tensors_manager=mrtrix3_tensors,
-        atlases_manager=atlases,
-        output_directory=output_directory,
-    )
-    covariates = CovariatesCollector(
-        mapper=mapper,
-        google_credentials_path=google_credentials,
-        output_directory=output_directory,
-        force=force,
-    )
-    connectome_recon = ConnectomeReconstructor(
-        mapper=mapper, atlases_manager=atlases, output_directory=output_directory
-    )
-    print("Running atlas registrations and parcellations of Dipy-derived metrics...")
-    _ = parcellation_dipy.run(force=force)
-    print("Running atlas registrations and parcellations of MRtrix3-derived metrics...")
-    _ = parcellation_mrtrix3.run(force=force)
-    print("Saving participant and session's covariates...")
-    covariates.save_to_file()
-    print("Reconstructing the connectome...")
-    _ = connectome_recon.run(force=force)
+    if "atlases" in steps:
+        atlases = Atlases(
+            mapper=mapper,
+            output_directory=output_directory,
+            atlases=atlases,
+            crop_to_gm=crop_to_gm,
+        )
+        print("Running atlas registrations...")
+        _ = atlases.run(force=force)
+    if "dipy_tensors" in steps:
+        dipy_tensors = DipyTensors(
+            mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
+        )
+        parcellation_dipy = Parcellation(
+            tensors_manager=dipy_tensors,
+            atlases_manager=atlases,
+            output_directory=output_directory,
+        )
+        print("Reconstructing tensors using Dipy...")
+        _ = parcellation_dipy.run(force=force)
+    if "mrtrix3_tensors" in steps:
+        mrtrix3_tensors = MRTrix3Tensors(
+            mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
+        )
+        parcellation_mrtrix3 = Parcellation(
+            tensors_manager=mrtrix3_tensors,
+            atlases_manager=atlases,
+            output_directory=output_directory,
+        )
+        print(
+            "Running atlas registrations and parcellations of MRtrix3-derived metrics..."
+        )
+        _ = parcellation_mrtrix3.run(force=force)
+    if "covariates" in steps:
+        covariates = CovariatesCollector(
+            mapper=mapper,
+            google_credentials_path=google_credentials,
+            output_directory=output_directory,
+            force=force,
+        )
+        print("Collecting covariates...")
+        covariates.save_to_file()
+    if "connectome_recon" in steps:
+        connectome_recon = ConnectomeReconstructor(
+            mapper=mapper, atlases_manager=atlases, output_directory=output_directory
+        )
+        print("Reconstructing the connectome...")
+        _ = connectome_recon.run(force=force)
 
 
 if __name__ == "__main__":
