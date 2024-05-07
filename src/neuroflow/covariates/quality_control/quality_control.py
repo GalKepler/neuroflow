@@ -7,7 +7,7 @@ from typing import ClassVar, Optional, Union
 from nipype.interfaces import fsl
 
 from neuroflow.covariates import Covariate
-from neuroflow.covariates.quality_control import striping_effect
+from neuroflow.covariates.quality_control.qc_diffusion_data import DiffusionQC
 from neuroflow.covariates.quality_control.utils import BASE_JSON_KEYS, QC_JSON
 from neuroflow.files_mapper.files_mapper import FilesMapper
 
@@ -111,8 +111,8 @@ class QualityControl(Covariate):
             eddy_qc.inputs.output_dir = str(output_directory)
             res = eddy_qc.run()
         except Exception as e:
-            self._post_eddy_qc(changed_files)
             warnings.warn(f"Failed to run eddy quality control: {e}")
+            self._post_eddy_qc(changed_files)
             return None
         self._post_eddy_qc(changed_files)
         return Path(res.outputs.qc_json)
@@ -128,24 +128,21 @@ class QualityControl(Covariate):
         force : Optional[bool], optional
             Force the processing of the data, by default False
         """
-        striping_score = striping_effect.calculate_strip_score(
-            self.mapper.files.get("b0_brain")
-        )
+        result = DiffusionQC(self.mapper.files).query()
         qc_json = self._run_eddy_qc(force=force)
         if qc_json is None:
-            result = {key: None for key in BASE_JSON_KEYS}
-            result["striping_score"] = striping_score
+            # update BASE_JSON_KEYS with None
+            for key in BASE_JSON_KEYS:
+                result[key] = None
             return result
         with qc_json.open("r") as f:
             qc_dict = json.load(f)
-        result = {}
         for key, value in self.EDDY_QC_JSON_PARSER.items():
             value = value["func"](qc_dict, **value["keys"])
             if isinstance(value, dict):
                 result.update(value)
             else:
                 result[key] = value
-        result["striping_score"] = striping_score
         return result
 
     def get_covariates(self, force: Optional[bool] = False) -> dict:

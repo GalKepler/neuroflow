@@ -33,8 +33,11 @@ def calculate_strip_score(
     float
         The striping score
     """
+    if isinstance(input_file, str) or isinstance(input_file, Path):
+        input_file = nib.load(input_file)
+    data = input_file.get_fdata()
+
     # Load the NIfTI file
-    data = nib.load(input_file).get_fdata()
     # Compute the mean signal profile along the given axis
     mean_profile = np.mean(data, axis=tuple(i for i in range(data.ndim) if i != axis))
 
