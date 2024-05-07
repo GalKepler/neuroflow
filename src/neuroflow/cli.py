@@ -146,7 +146,7 @@ def process(
             crop_to_gm=crop_to_gm,
         )
         print("Running atlas registrations...")
-        _ = atlases.run(force=force)
+        _ = atlases.register_atlas_to_dwi(force=force)
     if "dipy_tensors" in steps:
         dipy_tensors = DipyTensors(
             mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
