@@ -119,7 +119,7 @@ def process(
     """
     atlases = atlases.split(",") if atlases else None
     steps = steps.split(",") if steps else AVAILABLE_STEPS
-    ignore_steps = ignore_steps.split(",") if ignore_steps else None
+    ignore_steps = ignore_steps.split(",") if ignore_steps else []
     steps = [step for step in steps if step not in ignore_steps]
     preprocessed_directory = Path(input_dir)
     output_directory = Path(output_dir)
