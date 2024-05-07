@@ -47,6 +47,7 @@ class ConnectomeReconstructor:
         """
         self.mapper = mapper
         self.atlases_manager = atlases_manager
+        self.atlases_manager.crop_to_gm = False
         self.output_directory = self._gen_output_directory(output_directory)
 
     def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:

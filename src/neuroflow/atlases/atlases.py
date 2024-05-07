@@ -49,7 +49,6 @@ class Atlases:
         self.output_directory = self._gen_output_directory(output_directory)
         self.atlases = self._validate_atlas(atlases)
         self.crop_to_gm = crop_to_gm
-        self.label = "GM" if self.crop_to_gm else "WholeBrain"
 
     def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
         """
@@ -194,3 +193,10 @@ class Atlases:
         Register the atlases to the diffusion space.
         """
         return self.register_atlas_to_dwi()
+
+    @property
+    def label(self):
+        """
+        Get the label for the atlases.
+        """
+        return "GM" if self.crop_to_gm else "WholeBrain"
