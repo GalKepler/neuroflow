@@ -20,7 +20,7 @@ class ConnectomeReconstructor:
     """
 
     OUTPUT_TEMPLATE: ClassVar = (
-        "{atlas}/sub-{subject}_ses-{session}_space-dwi_atlas-{atlas}_scale-{scale}_meas-{stat_edge}_{suffix}.csv"  # noqa: E501
+        "{atlas}/sub-{subject}_ses-{session}_space-dwi_label-{label}_atlas-{atlas}_scale-{scale}_meas-{stat_edge}_{suffix}.csv"  # noqa: E501
     )
     RECONSTRUCTION_COMBINATIONS: ClassVar = COMBINATIONS.copy()
     OUTPUT_FLAG: ClassVar = "out_connectome"
@@ -125,6 +125,7 @@ class ConnectomeReconstructor:
                     atlas=atlas_name,
                     subject=self.mapper.subject,
                     session=self.mapper.session,
+                    label=self.atlases_manager.label,
                     scale=inputs.get("scale", "none"),
                     stat_edge=inputs["stat_edge"],
                     suffix=suffix,
