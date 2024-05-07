@@ -168,7 +168,7 @@ def process(
             output_directory=output_directory,
         )
         print(
-            "Running atlas registrations and parcellations of MRtrix3-derived metrics..."
+            "Running atlas registrations and parcellations of MRtrix3-derived metrics..."  # noqa: E501
         )
         _ = parcellation_mrtrix3.run(force=force)
     if "covariates" in steps:
