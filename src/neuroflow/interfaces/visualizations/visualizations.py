@@ -6,6 +6,7 @@ publication-ready visualizations.
 from pathlib import Path
 from typing import Union
 
+import matlab.engine
 import nibabel as nib
 import numpy as np
 import pandas as pd
@@ -14,6 +15,7 @@ from mne.viz import circular_layout
 from mne_connectivity.viz import plot_connectivity_circle
 from neuromaps.datasets import fetch_fslr
 from neuromaps.transforms import mni152_to_fslr
+from nipype.interfaces import fsl
 from surfplot import Plot
 from tqdm import tqdm
 
@@ -39,6 +41,18 @@ def map_groups_to_colors(group_labels):
     )
     color_mapping = {group: rgba_colors[i] for i, group in enumerate(unique_groups)}
     return [color_mapping[str(group)] for group in group_labels], color_mapping
+
+
+def generate_template() -> str:
+    """
+    Generate a template for the surface plot.
+
+    Returns
+    -------
+    str
+        Template for the surface plot.
+    """
+    return fsl.Info.standard_image("MNI152_T1_1mm_brain.nii.gz")
 
 
 class Visualizations:
@@ -87,6 +101,48 @@ class Visualizations:
             value = row[value_column]
             template_data[labeled_img_data == label] = value
         return nib.Nifti1Image(template_data, labeled_img.affine, labeled_img.header)
+
+    @staticmethod
+    def nifti_to_surface_matlab(
+        values: list,
+        atlas_path: Union[str, Path],
+        save_path: Union[str, Path],
+        template_path: Union[str, Path] = None,
+        cmap: str = "RdBu_r",
+        vmin: float = None,
+        vmax: float = None,
+    ):
+        """
+        Plot surface plot of nifti image using MATLAB.
+
+        Parameters
+        ----------
+        nifti : Union[str, Path, nib.Nifti1Image]
+            Nifti image to plot.
+        template_path : Union[str, Path], optional
+            Path to the template, by default None
+        cmap : str, optional
+            Colormap to use, by default "RdBu_r"
+        save_path : Union[str, Path], optional
+            Path to save the plot, by default None
+        vmin : float, optional
+            Minimum value for the colormap, by default None
+        vmax : float, optional
+            Maximum value for the colormap, by default None
+        """
+        Path(save_path).mkdir(parents=True, exist_ok=True)
+        template_path = template_path or generate_template()
+        eng = matlab.engine.start_matlab()
+        eng.addpath(str(Path(__file__).parent / "matlab_scripts"))
+        eng.addpath(str(Path(__file__).parent / "matlab_scripts" / "slanCM"))
+        res = eng.df_to_volume(matlab.double(values), str(atlas_path))
+        inputs = [res, str(template_path), str(save_path), cmap]
+        if (vmin is not None) and (vmax is not None):
+            inputs += [vmin, vmax]
+        eng.visualize_surface(
+            *inputs,
+        )
+        eng.quit()
 
     @staticmethod
     def nifti_to_surface(
