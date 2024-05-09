@@ -15,15 +15,15 @@ function f = visualize_surface(results_volume, template_path, save_path, cmap, v
         template = template(6:end-6,6:end-6,6:end-6);
     end
     views = {
-        struct('Name', 'Mid-Sagittal Left', 'Position', [0, 0], 'Slice', 'left'),
-        struct('Name', 'Mid-Sagittal Right', 'Position', [180, 0], 'Slice', 'right'),
-        struct('Name', 'Lateral Left Hemisphere', 'Position', [0, 0], 'Slice', 'none'),
-        struct('Name', 'Lateral Right Hemisphere', 'Position', [180, 0], 'Slice', 'none'),
-        struct('Name', 'Top View', 'Position', [-90, 90], 'Slice', 'none')
+        struct('Name', 'Mid-Sagittal_Left', 'Position', [0, 0], 'Slice', 'left'),
+        struct('Name', 'Mid-Sagittal_Right', 'Position', [180, 0], 'Slice', 'right'),
+        struct('Name', 'Lateral_Left_Hemisphere', 'Position', [0, 0], 'Slice', 'none'),
+        struct('Name', 'Lateral_Right_Hemisphere', 'Position', [180, 0], 'Slice', 'none'),
+        struct('Name', 'Top_View', 'Position', [-90, 90], 'Slice', 'none')
     };
 
     % Colormap configuration
-    if nargin < 4 || isempty(cmap)
+    if nargin < 5 || isempty(cmap)
         cmap = 'RdBu_r'; % Default colormap
     end
     % vmin and vmax configuration
