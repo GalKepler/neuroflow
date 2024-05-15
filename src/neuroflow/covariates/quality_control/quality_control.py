@@ -78,18 +78,21 @@ class QualityControl(Covariate):
             file = Path(new_file)
             file.rename(old_file)
 
-    def _prepare_inputs(self):
+    def _prepare_inputs(
+        self,
+        diffusion_qc: DiffusionQC,
+    ):
         inputs = {
             "bval_file": self._fix_file_name(self.mapper.files.get("bval_file")),
             "bvec_file": self._fix_file_name(self.mapper.files.get("bvec_file")),
             "mask_file": self._fix_file_name(self.mapper.files.get("b0_brain_mask")),
-            "idx_file": self._fix_file_name(self.mapper.files.get("index_file")),
+            "idx_file": self._fix_file_name(diffusion_qc.files.get("index_file")),
             "param_file": self._fix_file_name(self.mapper.files.get("param_file")),
         }
         inputs["base_name"] = str(inputs["bval_file"].parent / "data")
         return inputs
 
-    def _run_eddy_qc(self, force: Optional[bool] = False):
+    def _run_eddy_qc(self, diffusion_qc: DiffusionQC, force: Optional[bool] = False):
         """
         Run the eddy quality control
 
@@ -104,7 +107,7 @@ class QualityControl(Covariate):
         flag = Path(output_directory / self.EDDY_QC_FLAG)
         if flag.exists():
             return flag
-        inputs = self._prepare_inputs()
+        inputs = self._prepare_inputs(diffusion_qc=diffusion_qc)
         changed_files = self._pre_eddy_qc()
         try:
             eddy_qc = fsl.EddyQuad(**inputs)
@@ -128,8 +131,9 @@ class QualityControl(Covariate):
         force : Optional[bool], optional
             Force the processing of the data, by default False
         """
-        result = DiffusionQC(self.mapper.files).query()
-        qc_json = self._run_eddy_qc(force=force)
+        dqc = DiffusionQC(self.mapper.files)
+        result = dqc.query()
+        qc_json = self._run_eddy_qc(diffusion_qc=dqc, force=force)
         if qc_json is None:
             # update BASE_JSON_KEYS with None
             for key in BASE_JSON_KEYS:

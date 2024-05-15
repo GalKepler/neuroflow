@@ -84,7 +84,7 @@ class DiffusionQC:
         n_bval = len(self.bvalues)
         with open(updated_index_file, "w") as f:
             for i in range(n_bval):
-                f.write(f"{i}\n")
+                f.write("1\n")
         self.files["index_file"] = updated_index_file
 
     def query_bval(self) -> dict:
