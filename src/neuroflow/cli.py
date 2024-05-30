@@ -13,6 +13,7 @@ from neuroflow.files_mapper.files_mapper import FilesMapper
 from neuroflow.parcellation.parcellation import Parcellation
 from neuroflow.recon_tensors.dipy.dipy_tensors import DipyTensors
 from neuroflow.recon_tensors.mrtrix3.mrtrix3_tensors import MRTrix3Tensors
+from neuroflow.structural.smriprep_runner import SMRIPrepRunner
 
 AVAILABLE_STEPS = [
     "dipy_tensors",
@@ -64,6 +65,17 @@ def cli():
     help="Crop the atlases to the gray matter",
 )
 @click.option(
+    "--use_smriprep",
+    is_flag=True,
+    default=False,
+    help="Use sMRIPrep for the atlases and structural data",
+)
+@click.option(
+    "--fs_license_file",
+    type=click.Path(exists=True),
+    help="Path to the FreeSurfer license file",
+)
+@click.option(
     "--max_bval",
     type=int,
     default=1000,
@@ -92,6 +104,8 @@ def process(
     google_credentials: str,
     atlases: str,
     crop_to_gm: bool,
+    use_smriprep: bool,
+    fs_license_file: str,
     max_bval: int,
     ignore_steps: str,
     steps: str,
@@ -138,12 +152,24 @@ def process(
         if patterns_file is None
         else FilesMapper(path=preprocessed_directory, patterns=patterns_file)
     )
+    if use_smriprep or "smriprep" in steps:
+        smriprep_runner = SMRIPrepRunner(
+            mapper=mapper,
+            output_directory=output_directory,
+            fs_license_file=fs_license_file,
+        )
+        print("Running sMRIPrep...")
+        _ = smriprep_runner.run(force=force)
+    else:
+        smriprep_runner = None
     if "atlases" in steps:
         atlases = Atlases(
             mapper=mapper,
             output_directory=output_directory,
             atlases=atlases,
             crop_to_gm=crop_to_gm,
+            use_smriprep=use_smriprep,
+            smriprep_runner=smriprep_runner,
         )
         print("Running atlas registrations...")
         _ = atlases.register_atlas_to_dwi(force=force)

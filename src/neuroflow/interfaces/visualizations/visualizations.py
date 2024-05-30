@@ -6,7 +6,7 @@ publication-ready visualizations.
 from pathlib import Path
 from typing import Union
 
-import matlab.engine
+import matlab
 import nibabel as nib
 import numpy as np
 import pandas as pd
