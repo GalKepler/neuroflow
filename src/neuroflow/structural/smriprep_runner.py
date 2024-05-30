@@ -129,7 +129,9 @@ class SMRIPrepRunner:
         )
         if not force:
             output_files = self.collect_output_paths(strict=False)
-            if all([output is not None for output in output_files.values()]):
+            if all(
+                [output is not None for output in output_files.get("smriprep").values()]
+            ):
                 print(
                     f"Output files already exist for subject {self.mapper.subject}. Skipping sMRIPrep."  # noqa: E501
                 )
