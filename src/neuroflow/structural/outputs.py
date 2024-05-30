@@ -16,16 +16,15 @@ SMRIPREP_OUTPUTS = {
         "probseg_gm": "sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_label-GM_probseg.nii.gz",
         "probseg_wm": "sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_label-WM_probseg.nii.gz",
         "probseg_csf": "sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_label-CSF_probseg.nii.gz",
-        "summary": "sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_desc-summary.html",
         # Add other necessary output paths as needed
     },
     "freesurfer": {
-        "fsaverage": "freesurfer/fsaverage/mri/brain.mgz",
-        "T1w": "freesurfer/sub-{subject}/mri/T1.mgz",
-        "brainmask": "freesurfer/sub-{subject}/mri/brainmask.mgz",
-        "brain": "freesurfer/sub-{subject}/mri/brain.mgz",
-        "wm": "freesurfer/sub-{subject}/mri/wm.mgz",
-        "lh_pial": "freesurfer/sub-{subject}/surf/lh.pial",
-        "rh_pial": "freesurfer/sub-{subject}/surf/rh.pial",
+        "fsaverage": "fsaverage/mri/brain.mgz",
+        "T1w": "sub-{subject}/mri/T1.mgz",
+        "brainmask": "sub-{subject}/mri/brainmask.mgz",
+        "brain": "sub-{subject}/mri/brain.mgz",
+        "wm": "sub-{subject}/mri/wm.mgz",
+        "lh_pial": "sub-{subject}/surf/lh.pial",
+        "rh_pial": "sub-{subject}/surf/rh.pial",
     },
 }
