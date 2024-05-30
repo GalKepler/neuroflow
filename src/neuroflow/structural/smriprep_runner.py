@@ -117,7 +117,7 @@ class SMRIPrepRunner:
         output_directory.mkdir(parents=True, exist_ok=True)
         return output_directory
 
-    def run(self):
+    def run(self, force: bool = False):
         """
         Run the sMRIPrep pipeline.
         """
@@ -127,6 +127,13 @@ class SMRIPrepRunner:
             fs_license_file=self.fs_license_file,
             subject_id=self.mapper.subject,
         )
+        if not force:
+            output_files = self.collect_output_paths(strict=False)
+            if all([output is not None for output in output_files.values()]):
+                print(
+                    f"Output files already exist for subject {self.mapper.subject}. Skipping sMRIPrep."
+                )
+                return
         print("Running sMRIPrep pipeline...")
         print(" ".join(command))
         try:
