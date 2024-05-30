@@ -71,9 +71,7 @@ class SMRIPrepRunner:
         Path
             Path to the BIDS directory.
         """
-        bids_directory = Path(
-            str(self.output_directory).replace(self.DIRECTORY_NAME, self.BIDS_DIRECTORY)
-        )
+        bids_directory = Path(self.output_directory) / self.BIDS_DIRECTORY
         t1_destination = Path(
             self.T1_DESTINATION.format(
                 bids_directory=bids_directory,
