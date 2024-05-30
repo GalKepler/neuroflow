@@ -20,7 +20,7 @@ class SMRIPrepRunner:
     BIDS_DIRECTORY: ClassVar = "bids"
 
     T1_DESTINATION: ClassVar = (
-        "{bids_directory}/sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_T1w.nii.gz"
+        "{bids_directory}/sub-{subject}/ses-{session}/anat/sub-{subject}_ses-{session}_T1w.nii.gz"  # noqa: E501
     )
     T1_key = "t1w"
 
@@ -131,7 +131,7 @@ class SMRIPrepRunner:
             output_files = self.collect_output_paths(strict=False)
             if all([output is not None for output in output_files.values()]):
                 print(
-                    f"Output files already exist for subject {self.mapper.subject}. Skipping sMRIPrep."
+                    f"Output files already exist for subject {self.mapper.subject}. Skipping sMRIPrep."  # noqa: E501
                 )
                 return
         print("Running sMRIPrep pipeline...")
@@ -139,7 +139,7 @@ class SMRIPrepRunner:
         try:
             result = subprocess.run(command, check=True, text=True, capture_output=True)
             print(
-                f"sMRIPrep completed successfully for subject {self.mapper.subject}.\n{result.stdout}"
+                f"sMRIPrep completed successfully for subject {self.mapper.subject}.\n{result.stdout}"  # noqa: E501
             )
         except subprocess.CalledProcessError as e:
             print(

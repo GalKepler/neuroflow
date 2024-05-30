@@ -1,3 +1,4 @@
+# flake8: noqa: E501
 SMRIPREP_OUTPUTS = {
     "smriprep": {
         # T1w-related outputs
