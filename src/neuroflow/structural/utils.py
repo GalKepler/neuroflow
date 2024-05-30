@@ -27,7 +27,7 @@ def build_smriprep_command(
         "docker",
         "run",
         "--rm",
-        "-it",
+        # "-it",
         "-v",
         f"{Path(bids_directory).resolve()}:/data:ro",
         "-v",

@@ -4,11 +4,38 @@ from typing import Union
 
 from nilearn import plotting
 
-GM_CMDS = [
+GM_5TT_CMDS = [
     "mrconvert {five_tissue_type} {out_file} -force",
     "fslroi {out_file} {out_file} 0 2",
     "fslmaths {out_file} -Tmax -thr 0.5 -bin {out_file} -odt float",
 ]
+
+
+def generate_gm_mask_from_smriprep(
+    gm_probseg: Union[str, Path], out_file: Union[str, Path], force: bool = False
+):
+    """
+    Generate a grey matter mask from a probabilistic segmentation.
+
+    Parameters
+    ----------
+    gm_probseg : Union[str, Path]
+        Path to the gray matter probabilistic segmentation.
+    out_file : Union[str, Path]
+        Path to the output gray matter mask.
+    force : bool, optional
+        Force the generation of the mask, by default False
+    """
+    gm_probseg = Path(gm_probseg)
+    out_file = Path(out_file)
+    if out_file.exists() and not force:
+        print(f"Gray matter mask {out_file} already exists.")
+        return
+    if not gm_probseg.is_file():
+        raise FileNotFoundError(
+            f"Gray matter probabilistic segmentation {gm_probseg} not found."
+        )
+    os.system(f"mrthreshold {gm_probseg} {out_file}")  # noqa: S605
 
 
 def generate_gm_mask_from_5tt(
@@ -33,7 +60,7 @@ def generate_gm_mask_from_5tt(
         return
     if not five_tissue_type.is_file():
         raise FileNotFoundError(f"5TT image {five_tissue_type} not found.")
-    for cmd in GM_CMDS:
+    for cmd in GM_5TT_CMDS:
         cmd = cmd.format(five_tissue_type=five_tissue_type, out_file=out_file)
         os.system(cmd)  # noqa: S605
 

@@ -6,11 +6,16 @@ import copy
 from pathlib import Path
 from typing import ClassVar, Optional, Union
 
-from nipype.interfaces import fsl
+from nipype.interfaces import ants, fsl
 
 from neuroflow.atlases.available_atlases.available_atlases import AVAILABLE_ATLASES
-from neuroflow.atlases.utils import generate_gm_mask_from_5tt, qc_atlas_registration
+from neuroflow.atlases.utils import (
+    generate_gm_mask_from_5tt,
+    generate_gm_mask_from_smriprep,
+    qc_atlas_registration,
+)
 from neuroflow.files_mapper.files_mapper import FilesMapper
+from neuroflow.structural.smriprep_runner import SMRIPrepRunner
 
 
 class Atlases:
@@ -31,6 +36,8 @@ class Atlases:
         output_directory: Union[str, Path],
         atlases: Optional[Union[str, list]] = None,
         crop_to_gm: Optional[bool] = True,
+        use_smriprep: Optional[bool] = False,
+        smriprep_runner: Optional[SMRIPrepRunner] = None,
     ):
         """
         Initialize the Atlases class.
@@ -49,6 +56,32 @@ class Atlases:
         self.output_directory = self._gen_output_directory(output_directory)
         self.atlases = self._validate_atlas(atlases)
         self.crop_to_gm = crop_to_gm
+        self.use_smriprep, self.smriprep_runner = self._validate_smriprep(
+            use_smriprep, smriprep_runner
+        )
+
+    def _validate_smriprep(self, use_smriprep: bool, smriprep_runner: SMRIPrepRunner):
+        """
+        Validate the use of sMRIPrep.
+
+        Parameters
+        ----------
+        use_smriprep : bool
+            Whether to use sMRIPrep.
+        smriprep_runner : SMRIPrepRunner
+            An instance of SMRIPrepRunner.
+
+        Returns
+        -------
+        bool
+            Whether to use sMRIPrep.
+        """
+        if use_smriprep:
+            if smriprep_runner is None:
+                raise ValueError("sMRIPrep runner is required when using sMRIPrep.")
+            else:
+                smriprep_runner.run()
+        return use_smriprep, smriprep_runner
 
     def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
         """
@@ -96,16 +129,37 @@ class Atlases:
                 raise ValueError(f"Atlas {atlas} is not available.")
         return {atlas: self.ATLASES[atlas] for atlas in atlases}
 
-    def generate_gm_mask(self):
+    def generate_gm_mask(self, force: bool = False) -> Path:
         """
         Generate a grey matter mask.
+
+        Parameters
+        ----------
+        force : bool, optional
+            Force the generation of the mask, by default False
+
+        Returns
+        -------
+        Path
+            Path to the grey matter mask.
         """
         gm_mask = (
             self.output_directory
             / f"sub-{self.mapper.subject}_ses-{self.mapper.session}_space-T1w_label-GM_mask.nii.gz"  # noqa: E501
         )
+        if gm_mask.exists() and not force:
+            print(f"Grey matter mask {gm_mask} already exists.")
+            return gm_mask
         if not gm_mask.exists():
-            generate_gm_mask_from_5tt(self.mapper.files.get("t1w_5tt"), gm_mask)
+            if self.use_smriprep:
+                gm_probseg = self.smriprep_runner.outputs.get("smriprep").get(
+                    "probseg_gm"
+                )
+                generate_gm_mask_from_smriprep(gm_probseg, gm_mask, force=force)
+            else:
+                generate_gm_mask_from_5tt(
+                    self.mapper.files.get("t1w_5tt"), gm_mask, force=force
+                )
         return gm_mask
 
     def register_atlas_to_t1w(self, force: bool = False):
@@ -128,20 +182,62 @@ class Atlases:
                 out_file.unlink(missing_ok=True)
             if out_file.exists():
                 continue
-            aw = fsl.ApplyWarp(datatype="int", interp="nn", out_file=str(out_file))
-            aw.inputs.in_file = nifti
-            aw.inputs.ref_file = self.mapper.files.get("t1w_brain")
-            aw.inputs.mask_file = (
-                self.mapper.files.get("t1w_brain_mask")
-                if not self.crop_to_gm
-                else self.generate_gm_mask()
-            )
-            aw.inputs.field_file = self.mapper.files.get("template_to_t1w_warp")
-            aw.run()
+
+            if self.use_smriprep:
+                self.apply_h5_transform(nifti, out_file)
+            else:
+                self.apply_warp(nifti, out_file)
             qc_atlas_registration(
                 out_file, self.mapper.files.get("t1w_brain"), atlas, "T1w", force=force
             )
         return t1w_atlases
+
+    def apply_h5_transform(self, in_file: Union[str, Path], out_file: Union[str, Path]):
+        """
+        Apply an h5 transformation to a file.
+        """
+        apply_transforms = ants.ApplyTransforms(
+            dimension=3,
+            input_image=str(in_file),
+            output_image=str(out_file),
+            reference_image=str(
+                self.smriprep_runner.outputs.get("smriprep").get("preprocessed_T1w")
+            ),
+            transforms=str(
+                self.smriprep_runner.outputs.get("smriprep").get(
+                    "mni_to_native_transform"
+                )
+            ),
+            interpolation="NearestNeighbor",
+        )
+        apply_transforms.run()
+        if self.crop_to_gm:
+            gm_mask = self.generate_gm_mask()
+            apply_transforms = fsl.ApplyMask(
+                in_file=str(out_file),
+                mask_file=str(gm_mask),
+                out_file=str(out_file),
+            )
+            apply_transforms.run()
+
+    def apply_warp(
+        self,
+        in_file: Union[str, Path],
+        out_file: Union[str, Path],
+    ):
+        """
+        Apply a warp to a file.
+        """
+        aw = fsl.ApplyWarp(datatype="int", interp="nn", out_file=str(out_file))
+        aw.inputs.in_file = in_file
+        aw.inputs.ref_file = self.mapper.files.get("t1w_brain")
+        aw.inputs.mask_file = (
+            self.mapper.files.get("t1w_brain_mask")
+            if not self.crop_to_gm
+            else self.generate_gm_mask()
+        )
+        aw.inputs.field_file = self.mapper.files.get("template_to_t1w_warp")
+        aw.run()
 
     def register_atlas_to_dwi(self, force: bool = False):
         """
