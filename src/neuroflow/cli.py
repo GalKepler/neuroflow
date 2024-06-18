@@ -172,6 +172,7 @@ def process(
             smriprep_runner=smriprep_runner,
         )
         print("Running atlas registrations...")
+        _ = atlases.register_atlas_to_t1w(force=force)
         _ = atlases.register_atlas_to_dwi(force=force)
     if "dipy_tensors" in steps:
         dipy_tensors = DipyTensors(

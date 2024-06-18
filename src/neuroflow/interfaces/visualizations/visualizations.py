@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Union
 
 import matlab
+import matlab.engine
 import nibabel as nib
 import numpy as np
 import pandas as pd
@@ -138,7 +139,7 @@ class Visualizations:
         res = eng.df_to_volume(matlab.double(values), str(atlas_path))
         inputs = [res, str(template_path), str(save_path), cmap]
         if (vmin is not None) and (vmax is not None):
-            inputs += [vmin, vmax]
+            inputs += [matlab.double(vmin), matlab.double(vmax)]
         eng.visualize_surface(
             *inputs,
         )
