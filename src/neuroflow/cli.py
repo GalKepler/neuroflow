@@ -92,6 +92,12 @@ def cli():
     help="Run specific steps",
 )
 @click.option(
+    "--nthreads",
+    type=int,
+    default=1,
+    help="Number of threads to use",
+)
+@click.option(
     "--force",
     is_flag=True,
     default=False,
@@ -109,6 +115,7 @@ def process(
     max_bval: int,
     ignore_steps: str,
     steps: str,
+    nthreads: int,
     force: bool,
 ):
     """
@@ -157,6 +164,7 @@ def process(
             mapper=mapper,
             output_directory=output_directory,
             fs_license_file=fs_license_file,
+            nthreads=nthreads,
         )
         print("Running sMRIPrep...")
         _ = smriprep_runner.run(force=force)
@@ -187,7 +195,10 @@ def process(
         _ = parcellation_dipy.run(force=force)
     if "mrtrix3_tensors" in steps:
         mrtrix3_tensors = MRTrix3Tensors(
-            mapper=mapper, output_directory=output_directory, max_bvalue=max_bval
+            mapper=mapper,
+            output_directory=output_directory,
+            max_bvalue=max_bval,
+            nthreas=nthreads,
         )
         parcellation_mrtrix3 = Parcellation(
             tensors_manager=mrtrix3_tensors,
@@ -209,7 +220,10 @@ def process(
         covariates.save_to_file()
     if "connectome_recon" in steps:
         connectome_recon = ConnectomeReconstructor(
-            mapper=mapper, atlases_manager=atlases, output_directory=output_directory
+            mapper=mapper,
+            atlases_manager=atlases,
+            output_directory=output_directory,
+            nthreads=nthreads,
         )
         print("Reconstructing the connectome...")
         _ = connectome_recon.run(force=force)
