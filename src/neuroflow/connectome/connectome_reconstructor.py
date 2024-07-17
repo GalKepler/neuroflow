@@ -32,6 +32,7 @@ class ConnectomeReconstructor:
         mapper: FilesMapper,
         atlases_manager: Atlases,
         output_directory: Optional[str] = None,
+        nthreads: int = 1,
     ):
         """
         Initialize the ConnectomeReconstructor class.
@@ -49,6 +50,7 @@ class ConnectomeReconstructor:
         self.atlases_manager = atlases_manager
         self.atlases_manager.crop_to_gm = False
         self.output_directory = self._gen_output_directory(output_directory)
+        self.nthreads = nthreads
 
     def _gen_output_directory(self, output_directory: Optional[str] = None) -> Path:
         """
@@ -265,6 +267,7 @@ class ConnectomeReconstructor:
         return {
             "in_tracts": self.mapper.files.get("tracts"),
             "in_nodes": self.mapper.files.get("nodes"),
+            "nthreads": self.nthreads,
         }
 
     @property

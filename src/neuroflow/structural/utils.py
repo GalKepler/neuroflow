@@ -2,7 +2,11 @@ from pathlib import Path
 
 
 def build_smriprep_command(
-    bids_directory: Path, output_directory: Path, fs_license_file: Path, subject_id: str
+    bids_directory: Path,
+    output_directory: Path,
+    fs_license_file: Path,
+    subject_id: str,
+    nthreads: int = 1,
 ):
     """
     Build the sMRIPrep command.
@@ -44,4 +48,6 @@ def build_smriprep_command(
         "/fs_license",
         "--output-spaces",
         "MNI152NLin2009cAsym",
+        "--nthreads",
+        str(nthreads),
     ]

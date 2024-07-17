@@ -28,6 +28,7 @@ class MRTrix3Tensors(ReconTensors):
         output_directory: Union[str, Path],
         max_bvalue: int = 1000,
         bval_tol: int = 50,
+        nthreas: int = 1,
     ):
         """
         Initialize the DipyTensors class.
@@ -48,6 +49,7 @@ class MRTrix3Tensors(ReconTensors):
             bval_tol=bval_tol,
         )
         self.software = "mrtrix3"
+        self.nthreads = nthreas
 
     def collect_inputs(self) -> dict:
         """
@@ -91,6 +93,7 @@ class MRTrix3Tensors(ReconTensors):
         )
         fit_tensor.inputs.in_mask = self.mapper.files.get("b0_brain_mask")
         fit_tensor.inputs.out_file = out_file
+        fit_tensor.inputs.nthreads = self.nthreads
         fit_tensor.run()
         return out_file
 
@@ -114,5 +117,6 @@ class MRTrix3Tensors(ReconTensors):
             **{f"out_{key}": str(value) for key, value in outputs.items()}
         )
         tensor_metrics.inputs.in_file = tensor
+        tensor_metrics.inputs.nthreads = self.nthreads
         tensor_metrics.run()
         return outputs

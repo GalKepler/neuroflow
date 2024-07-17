@@ -32,11 +32,13 @@ class SMRIPrepRunner:
         mapper: FilesMapper,
         output_directory: Union[str, Path],
         fs_license_file: Optional[Path] = None,
+        nthreads: int = 1,
     ):
         self.mapper = mapper
         self.output_directory = self._gen_output_directory(output_directory)
         self.bids_directory = self._gen_bids_directory()
         self.fs_license_file = self._get_fs_license_file(fs_license_file)
+        self.nthreads = nthreads
 
     def _get_fs_license_file(self, fs_license_file: Path) -> Path:
         """
@@ -126,6 +128,7 @@ class SMRIPrepRunner:
             output_directory=self.output_directory,
             fs_license_file=self.fs_license_file,
             subject_id=self.mapper.subject,
+            nthreads=self.nthreads,
         )
         if not force:
             output_files = self.collect_output_paths(strict=False)
