@@ -46,7 +46,7 @@ dependencies = [
     "flake8~=7.0",
     "isort~=5.13",
     "ruff~=0.3",
-    "setuptools~=69.5",
+    "setuptools",
 ]
 
 [project.optional-dependencies]
