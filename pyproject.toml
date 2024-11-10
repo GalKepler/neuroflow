@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=69.5", "wheel"]
+requires = ["setuptools>=70.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "neuroflow-yalab"
-version = "0.1.4"
+version = "0.1.7"
 description = "NeuroFlow: A streamlined toolkit for DWI post-processing, offering advanced analysis and visualization for neuroimaging research."
 readme = "README.rst"
 authors = [

@@ -8,6 +8,11 @@ function f = visualize_surface(results_volume, template_path, save_path, cmap, v
     if isa(results_volume, 'char')
         results_volume = niftiread(results_volume);
     end
+
+    % smooth the results volume
+    smooth_sigma = 2;  % Adjust sigma for more or less smoothing
+    results_volume = imgaussfilt3(results_volume, smooth_sigma);
+
     if isa(template_path,'char')
         template = niftiread(template_path);
     end
