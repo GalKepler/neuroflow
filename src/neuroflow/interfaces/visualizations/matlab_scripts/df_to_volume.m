@@ -10,6 +10,9 @@ function results_map = df_to_volume(values, atlas_path)
     atlas = niftiread(atlas_path);
     N = max(atlas(:));  %
     results_map = zeros(size(atlas));
+    disp('Creating results map...');
+    disp('Number of regions in atlas: ');
+    disp(N);
     for ind=1:N
         if ~isnan(values(ind))
             results_map(atlas==ind) = values(ind);
